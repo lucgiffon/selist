@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block extra_headers %}
+    <link rel="stylesheet" href="{% static 'css/chat_style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            overflow: hidden;
+        }
+        
+        nav {
+            z-index: 100;
+        }
+    </style>
+{% endblock %}
+
+{% block title %}
+  Messagerie
+{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="chat-sidebar">
+        <div class="user-profile">
+            <div class="avatar">
+                <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" alt="Profile">
+            </div>
+            <div class="user-info">
+                <h3>Mon Profil</h3>
+                {# todo utiliser le nom de l'utilisateur #}
+{#                <p>En ligne</p>#}
+            </div>
+        </div>
+        <div class="conversation-list">
+            <div class="conversation active">
+                <div class="avatar">
+                    <img src="https://ui-avatars.com/api/?name=John&background=4CAF50&color=fff" alt="John"> {# todo utiliser le nom du canal ou du trade #}
+                </div>
+                <div class="conversation-info">
+                    <h4>John Doe</h4> {# todo utiliser le nom du canal ou du trade #}
+                    <p>À bientôt !</p> {# todo afficher le dernier message du trade #}
+                </div>
+                <div class="conversation-time">{# todo afficher l'heure du dernier message du trade #}</div>
+            </div>
+            <div class="conversation">
+                <div class="avatar">
+                    <img src="https://ui-avatars.com/api/?name=Lisa&background=FF5722&color=fff" alt="Lisa">
+                </div>
+                <div class="conversation-info">
+                    <h4>Lisa Ray</h4>
+                    <p>Bonjour, comment ça va ?</p>
+                </div>
+                <div class="conversation-time">Hier</div>
+            </div>
+            {# todo faire une boucle avec une condition pour le premier élément de la boucle ayant la classe css spéciale #}
+        </div>
+    </div>
+    
+    <div class="chat-main">
+        <div class="chat-header">
+            <div class="chat-contact">
+                <div class="avatar">
+                    <img src="https://ui-avatars.com/api/?name=Agora&background=4CAF50&color=fff" alt="Agora"> {# todo télécharger une fois et servir la donnée nous même #}
+                </div>
+                <div class="contact-info">
+                    <h3>Agora</h3> {#  todo dans la page de conversation avec une personne, mettre le nom de l'interlocuteur #}
+                </div>
+            </div>
+            <div class="chat-actions">
+{#                <i class="fas fa-phone"></i>#} {# todo éventuellement permettre d'appeler #}
+{#                <i class="fas fa-video"></i>#}
+{#                <i class="fas fa-ellipsis-v"></i> #}
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+            {%  for msg in initiation_messages %}
+            <div class="chat-message other"> {# todo afficher les messages dans une boucle #}
+                <div class="message">
+                    <p>{{ msg.text }}</p>
+                    <span class="message-time">{{ msg.created_at|date:"d-m-Y | H:i" }}</span> {# todo utiliser date du message #}
+                </div>
+                <div class="avatar">
+                    <img src="https://ui-avatars.com/api/?name={{ msg.user.username }}&background=4CAF50&color=fff" alt="{{ msg.user.username }}"> {# todo récupérer une fois et stocker #} {# todo utiliser username #}
+                </div>
+            </div>
+            {% endfor %}
+            
+            <div class="chat-message user">
+                <div class="message">
+                    <p>Très bien, merci ! Et toi ?</p>
+                    <span class="message-time">14:32</span> {# todo use special in the loop for current user message #}
+                </div>
+            </div>
+
+        <div class="chat-input">
+            <div class="input-actions">
+{#                <i class="fas fa-paperclip"></i>#}
+                <i class="far fa-smile"></i> {# todo donner la possibilité de mettre des emoji #}
+            </div>
+            <textarea id="message-input" placeholder="Écrivez votre message..."></textarea>
+            <button id="send-button"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>
+{% endblock %}

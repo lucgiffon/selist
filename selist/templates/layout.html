@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+          Selist
+        {% endblock %}
+    </title>
+    <script src="{% static 'js/main.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block extra_headers %}
+    {% endblock %}
+</head>
+<body>
+<nav>
+    <a href="/">Accueil</a> |
+    <a href="/about">A propos</a> |
+    <a href="/chat">Chat</a>
+
+</nav>
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+</body>
+</html>
