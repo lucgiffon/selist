@@ -76,13 +76,13 @@
         
         <div class="chat-messages" id="chat-messages">
             {%  for msg in initiation_messages %}
-            <div class="chat-message other"> {# todo afficher les messages dans une boucle #}
+            <div class="chat-message other">
                 <div class="message">
                     <p>{{ msg.text }}</p>
-                    <span class="message-time">{{ msg.created_at|date:"d-m-Y | H:i" }}</span> {# todo utiliser date du message #}
+                    <span class="message-time">{{ msg.created_at|date:"d-m-Y | H:i" }}</span>
                 </div>
                 <div class="avatar">
-                    <img src="https://ui-avatars.com/api/?name={{ msg.user.username }}&background=4CAF50&color=fff" alt="{{ msg.user.username }}"> {# todo récupérer une fois et stocker #} {# todo utiliser username #}
+                    <img src="https://ui-avatars.com/api/?name={{ msg.user.username }}&background=4CAF50&color=fff" alt="{{ msg.user.username }}"> {# todo récupérer une fois et stocker #}
                 </div>
             </div>
             {% endfor %}
@@ -90,14 +90,14 @@
             <div class="chat-message user">
                 <div class="message">
                     <p>Très bien, merci ! Et toi ?</p>
-                    <span class="message-time">14:32</span> {# todo use special in the loop for current user message #}
+                    <span class="message-time">14:32</span> {# todo use special css  user in the loop for current user message: use if condition == current user #}
                 </div>
             </div>
 
         <div class="chat-input">
             <div class="input-actions">
 {#                <i class="fas fa-paperclip"></i>#}
-                <i class="far fa-smile"></i> {# todo donner la possibilité de mettre des emoji #}
+                <i class="far fa-smile"></i> {# todo later donner la possibilité de mettre des emoji #}
             </div>
             <textarea id="message-input" placeholder="Écrivez votre message..."></textarea>
             <button id="send-button"><i class="fas fa-paper-plane"></i></button>

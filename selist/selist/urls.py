@@ -24,4 +24,5 @@ urlpatterns = [
     path("", views.homepage),
     path("about/", views.about),
     path("chat/", include("chat.urls")),
+    path("users/", include("users.urls")),
 ]
