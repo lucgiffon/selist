@@ -23,6 +23,21 @@ nav {
     height: 60px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+nav > div {
+    display: flex;
+    align-items: center;
+}
+
+nav > div:first-child {
+    flex: 1;
+}
+
+nav > div:last-child {
+    margin-left: auto;
 }
 
 main {

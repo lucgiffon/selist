@@ -1,6 +1,6 @@
 from .forms import SelisteCreationForm
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 
 def register_view(request):
@@ -23,3 +23,8 @@ def login_view(request):
             login(request, user)
             return redirect("/chat/")
     return render(request, "users/login.html")
+
+
+def logout_view(request):
+    logout(request)
+    return redirect("/chat/")

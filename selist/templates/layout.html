@@ -17,10 +17,20 @@
 </head>
 <body>
 <nav>
-    <a href="/">Accueil</a> |
-    <a href="/about">A propos</a> |
-    <a href="/chat">Chat</a>
-
+    <div>
+        <a href="/">Accueil</a> |
+        <a href="/about">A propos</a> |
+        <a href="/chat">Chat</a>
+    </div>
+    <div>
+        {% if user.is_authenticated %}
+            {{ user.username }} |
+            <a href="{% url 'users:logout' %}">Se déconnecter</a>
+        {% else %}
+            <a href="{% url 'users:login' %}">Se connecter</a> |
+            <a href="{% url 'users:register' %}">Créer un compte</a>
+        {% endif %}
+    </div>
 </nav>
 <main>
     {% block content %}

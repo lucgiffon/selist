@@ -142,7 +142,7 @@
       </div>
       <button type="submit" class="submit-btn">S'inscrire</button>
   </form>
-  <p class="login-link">Déjà inscrit? <a href="#">Se connecter</a></p> <!--{\% url 'login' %}"-->
+  <p class="login-link">Déjà inscrit? <a href="{% url 'users:login' %}">Se connecter</a></p>
 </div>
 
 {% endblock %}
