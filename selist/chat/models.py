@@ -4,7 +4,6 @@ from django.db import models
 class Message(models.Model):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    id = models.AutoField(primary_key=True)
     user = models.ForeignKey("selist.Seliste", on_delete=models.PROTECT)
     trade = models.ForeignKey("Trade", on_delete=models.PROTECT)
     type = models.CharField(
@@ -23,7 +22,6 @@ class Message(models.Model):
 
 class Trade(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    id = models.AutoField(primary_key=True)
     initiator = models.ForeignKey(
         "selist.Seliste", on_delete=models.PROTECT, related_name="initiator"
     )
@@ -38,19 +36,18 @@ class Trade(models.Model):
 
 class Proposal(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    id = models.AutoField(primary_key=True)
     sender = models.ForeignKey(
         "selist.Seliste", on_delete=models.PROTECT, related_name="sender"
     )
     receiver = models.ForeignKey(
         "selist.Seliste", on_delete=models.PROTECT, related_name="receiver"
     )
+    trade = models.ForeignKey("Trade", on_delete=models.PROTECT)
     value = models.IntegerField()
     accepted = models.BooleanField(default=False)
 
 
 class Finalisation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    id = models.AutoField(primary_key=True)
     proposal = models.ForeignKey("Proposal", on_delete=models.PROTECT)
     accepted = models.BooleanField(default=False)
