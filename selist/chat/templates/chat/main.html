@@ -76,23 +76,19 @@
         
         <div class="chat-messages" id="chat-messages">
             {%  for msg in initiation_messages %}
-            <div class="chat-message other">
+            <div class="chat-message {% if msg.user == request.user %}user{% else %}other{% endif %}">
                 <div class="message">
                     <p>{{ msg.text }}</p>
                     <span class="message-time">{{ msg.created_at|date:"d-m-Y | H:i" }}</span>
                 </div>
+                {% if msg.user != request.user %}
                 <div class="avatar">
                     <img src="https://ui-avatars.com/api/?name={{ msg.user.username }}&background=4CAF50&color=fff" alt="{{ msg.user.username }}"> {# todo récupérer une fois et stocker #}
                 </div>
+                {% endif %}
             </div>
             {% endfor %}
-            
-            <div class="chat-message user">
-                <div class="message">
-                    <p>Très bien, merci ! Et toi ?</p>
-                    <span class="message-time">14:32</span> {# todo use special css  user in the loop for current user message: use if condition == current user #}
-                </div>
-            </div>
+        </div>
 
         <div class="chat-input">
             <div class="input-actions">
