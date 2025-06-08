@@ -9,7 +9,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "selist.settings")
 django.setup()
 
 from chat.models import Proposal, Finalisation, Trade, Message
-from selist.models import Seliste
+from users.models import Seliste
 
 with transaction.atomic():
 
