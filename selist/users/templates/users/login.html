@@ -7,98 +7,13 @@
 
 
 {% block extra_headers %}
-<style>
-  main {
-    display: block;
-  }
-
-  .login-container {
-    max-width: 400px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: fit-content;
-  }
-
-  h1 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 1.5rem;
-    font-weight: 500;
-  }
-
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  label {
-    font-size: 0.9rem;
-    color: #555;
-  }
-
-  input {
-    padding: 0.8rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
-  }
-
-  input:focus {
-    outline: none;
-    border-color: #4a90e2;
-    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-  }
-
-  .submit-btn {
-    margin-top: 1rem;
-    padding: 0.8rem;
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-
-  .submit-btn:hover {
-    background-color: #3a7bc8;
-  }
-
-  .register-link {
-    text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
-    color: #666;
-  }
-
-  .register-link a {
-    color: #4a90e2;
-    text-decoration: none;
-  }
-
-  .register-link a:hover {
-    text-decoration: underline;
-  }
-
-</style>
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="login-container">
+<div class="form-container">
   <h1>Connexion</h1>
-  <form action="/users/login/" method="post" class="login-form">
+  <form action="/users/login/" method="post" class="auth-form">
       {% csrf_token %}
       <div class="form-group">
           <label for="username">Nom d'utilisateur:</label>
@@ -110,7 +25,7 @@
       </div>
       <button type="submit" class="submit-btn">Se connecter</button>
   </form>
-  <p class="register-link">Pas encore inscrit? <a href="{% url 'users:register' %}">S'inscrire</a></p>
+  <p class="form-nav-link">Pas encore inscrit? <a href="{% url 'users:register' %}">S'inscrire</a></p>
 </div>
 
 {% endblock %}
