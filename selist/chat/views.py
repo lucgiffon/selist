@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from selist.models import Seliste
+from users.models import Seliste
 from .models import Message
 from .models import Trade
 

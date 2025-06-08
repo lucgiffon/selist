@@ -4,7 +4,7 @@ from django.db import models
 class Message(models.Model):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey("selist.Seliste", on_delete=models.PROTECT)
+    user = models.ForeignKey("users.Seliste", on_delete=models.PROTECT)
     trade = models.ForeignKey("Trade", on_delete=models.PROTECT)
     type = models.CharField(
         max_length=12,
@@ -23,7 +23,7 @@ class Message(models.Model):
 class Trade(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     initiator = models.ForeignKey(
-        "selist.Seliste", on_delete=models.PROTECT, related_name="initiator"
+        "users.Seliste", on_delete=models.PROTECT, related_name="initiator"
     )
     type = models.CharField(
         max_length=6,
@@ -37,10 +37,10 @@ class Trade(models.Model):
 class Proposal(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     sender = models.ForeignKey(
-        "selist.Seliste", on_delete=models.PROTECT, related_name="sender"
+        "users.Seliste", on_delete=models.PROTECT, related_name="sender"
     )
     receiver = models.ForeignKey(
-        "selist.Seliste", on_delete=models.PROTECT, related_name="receiver"
+        "users.Seliste", on_delete=models.PROTECT, related_name="receiver"
     )
     trade = models.ForeignKey("Trade", on_delete=models.PROTECT)
     value = models.IntegerField()
