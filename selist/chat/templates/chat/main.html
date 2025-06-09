@@ -91,6 +91,7 @@
             {% endfor %}
         </div>
 
+        {% if user.is_authenticated %}
         <div class="chat-input">
             <div class="input-actions">
 {#                <i class="fas fa-paperclip"></i>#}
@@ -99,9 +100,24 @@
             <textarea id="message-input" placeholder="Écrivez votre message..."></textarea>
             <button id="send-button"><i class="fas fa-paper-plane"></i></button>
         </div>
+        {% else %}
+        <div class="chat-input chat-input-login">
+            <div class="login-buttons">
+                <a href="{% url 'users:login' %}" class="login-btn login-btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Se connecter
+                </a>
+                <span class="login-separator">ou</span>
+                <a href="{% url 'users:register' %}" class="login-btn login-btn-secondary">
+                    <i class="fas fa-user-plus"></i> Créer un compte
+                </a>
+                <span class="login-message">pour participer</span>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 
+{% if user.is_authenticated %}
 <!-- Modal popup for trade type selection -->
 <div id="trade-type-modal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
@@ -126,4 +142,5 @@
     const createTradeUrl = "{% url 'chat:create_trade' %}";
 </script>
 <script src="{% static 'js/chat.js' %}"></script>
+{% endif %}
 {% endblock %}
