@@ -79,7 +79,7 @@
             {%  for msg in initiation_messages %}
             <div class="chat-message {% if msg.user == request.user %}user{% else %}other{% endif %}">
                 <div class="message">
-                    <p>{{ msg.text }}</p>
+                    <p class="message-text">{{ msg.text }}</p>
                     <span class="message-time">{{ msg.created_at|date:"d-m-Y | H:i" }}</span>
                 </div>
                 {% if msg.user != request.user %}
@@ -95,10 +95,21 @@
         <div class="chat-input">
             <div class="input-actions">
 {#                <i class="fas fa-paperclip"></i>#}
-                <i class="far fa-smile"></i> {# todo later donner la possibilité de mettre des emoji #}
+                <i id="emoji-btn" class="far fa-smile"></i>
             </div>
             <textarea id="message-input" placeholder="Écrivez votre message..."></textarea>
             <button id="send-button"><i class="fas fa-paper-plane"></i></button>
+            
+            <!-- Emoji picker popup -->
+            <div id="emoji-picker" class="emoji-picker" style="display: none;">
+                <div class="emoji-list">
+                    <span class="emoji-item" data-shortcode=":slightly_smiling_face:">😊</span>
+                    <span class="emoji-item" data-shortcode=":joy:">😂</span>
+                    <span class="emoji-item" data-shortcode=":heart:">❤️</span>
+                    <span class="emoji-item" data-shortcode=":thumbs_up:">👍</span>
+                    <span class="emoji-item" data-shortcode=":sweat_smile:">😅</span>
+                </div>
+            </div>
         </div>
         {% else %}
         <div class="chat-input chat-input-login">
@@ -116,6 +127,9 @@
         {% endif %}
     </div>
 </div>
+
+<!-- Emoji rendering for all users -->
+<script src="{% static 'js/emoji-renderer.js' %}"></script>
 
 {% if user.is_authenticated %}
 <!-- Modal popup for trade type selection -->

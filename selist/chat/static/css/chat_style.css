@@ -277,6 +277,7 @@ body {
     padding: 15px;
     background-color: #F5F5F5;
     border-top: 1px solid var(--divider-color);
+    position: relative;
 }
 
 .input-actions {
@@ -386,6 +387,38 @@ body {
     color: var(--text-secondary);
     font-size: 14px;
     font-style: italic;
+}
+
+/* Emoji picker styles */
+.emoji-picker {
+    position: absolute;
+    bottom: 100%;
+    left: 15px;
+    background-color: white;
+    border: 1px solid var(--divider-color);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 10px;
+    margin-bottom: 5px;
+    z-index: 1000;
+}
+
+.emoji-list {
+    display: flex;
+    gap: 8px;
+}
+
+.emoji-item {
+    font-size: 20px;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    user-select: none;
+}
+
+.emoji-item:hover {
+    background-color: var(--light-primary);
 }
 
 /* Responsive Design */

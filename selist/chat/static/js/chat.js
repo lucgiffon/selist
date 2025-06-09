@@ -5,8 +5,42 @@ document.addEventListener('DOMContentLoaded', function() {
     const demandBtn = document.getElementById('demand-btn');
     const offerBtn = document.getElementById('offer-btn');
     const cancelBtn = document.getElementById('cancel-btn');
+    const emojiBtn = document.getElementById('emoji-btn');
+    const emojiPicker = document.getElementById('emoji-picker');
     
     let currentMessage = '';
+
+    // Emoji picker functionality
+    if (emojiBtn && emojiPicker) {
+        // Toggle emoji picker
+        emojiBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Handle emoji selection
+        const emojiItems = document.querySelectorAll('.emoji-item');
+        emojiItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const shortcode = this.getAttribute('data-shortcode');
+                const currentPos = messageInput.selectionStart;
+                const currentValue = messageInput.value;
+                
+                messageInput.value = currentValue.slice(0, currentPos) + shortcode + currentValue.slice(currentPos);
+                
+                messageInput.selectionStart = messageInput.selectionEnd = currentPos + shortcode.length;
+                messageInput.focus();
+                
+                emojiPicker.style.display = 'none';
+            });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) {
+                emojiPicker.style.display = 'none';
+            }
+        });
+    }
 
     // Handle send button click
     sendButton.addEventListener('click', function() {
