@@ -34,27 +34,41 @@
             </div>
         </div>
         <div class="conversation-list">
-            <div class="conversation active">
-                <div class="avatar">
-                    <img src="https://ui-avatars.com/api/?name=John&background=4CAF50&color=fff" alt="John"> {# todo utiliser le nom du canal ou du trade #}
+            <a href="{% url 'chat:main' %}" class="conversation-link">
+                <div class="conversation {% if current_trade is None %}active{% endif %}">
+                    <div class="avatar">
+                        <img src="https://ui-avatars.com/api/?name=Agora&background=4CAF50&color=fff" alt="Agora">
+                    </div>
+                    <div class="conversation-info">
+                        <h4>Agora</h4>
+                        <p>Conversations publiques</p>
+                    </div>
+                    <div class="conversation-time"></div>
                 </div>
-                <div class="conversation-info">
-                    <h4>John Doe</h4> {# todo utiliser le nom du canal ou du trade #}
-                    <p>À bientôt !</p> {# todo afficher le dernier message du trade #}
-                </div>
-                <div class="conversation-time">{# todo afficher l'heure du dernier message du trade #}</div>
-            </div>
-            <div class="conversation">
-                <div class="avatar">
-                    <img src="https://ui-avatars.com/api/?name=Lisa&background=FF5722&color=fff" alt="Lisa">
-                </div>
-                <div class="conversation-info">
-                    <h4>Lisa Ray</h4>
-                    <p>Bonjour, comment ça va ?</p>
-                </div>
-                <div class="conversation-time">Hier</div>
-            </div>
-            {# todo faire une boucle avec une condition pour le premier élément de la boucle ayant la classe css spéciale #}
+            </a>
+            
+            {% if user.is_authenticated and user_trades %}
+                {% for trade in user_trades %}
+                    {% with trade.message_set.first as initiation_msg %}
+                    {% with trade.message_set.last as last_msg %}
+                    <a href="{% url 'chat:conversation' trade.id %}" class="conversation-link">
+                        <div class="conversation {% if current_trade and current_trade.id == trade.id %}active{% endif %}">
+                            <div class="avatar">
+                                <img src="https://ui-avatars.com/api/?name={{ trade.initiator.username }}&background=FF5722&color=fff" alt="{{ trade.initiator.username }}">
+                            </div>
+                            <div class="conversation-info">
+                                <h4>{{ trade.get_type_display }} - {% if initiation_msg %}{{ initiation_msg.text|truncatechars:30 }}{% endif %}</h4>
+                                <p>{% if last_msg %}{{ last_msg.text|truncatechars:50 }}{% endif %}</p>
+                            </div>
+                            <div class="conversation-time">
+                                {% if last_msg %}{{ last_msg.created_at|date:"d/m" }}{% endif %}
+                            </div>
+                        </div>
+                    </a>
+                    {% endwith %}
+                    {% endwith %}
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
     
@@ -62,10 +76,14 @@
         <div class="chat-header">
             <div class="chat-contact">
                 <div class="avatar">
-                    <img src="https://ui-avatars.com/api/?name=Agora&background=4CAF50&color=fff" alt="Agora"> {# todo télécharger une fois et servir la donnée nous même #}
+                    {% if current_trade %}
+                        <img src="https://ui-avatars.com/api/?name={{ current_trade.initiator.username }}&background=FF5722&color=fff" alt="{{ current_trade.initiator.username }}">
+                    {% else %}
+                        <img src="https://ui-avatars.com/api/?name=Agora&background=4CAF50&color=fff" alt="Agora">
+                    {% endif %}
                 </div>
                 <div class="contact-info">
-                    <h3>Agora</h3> {#  todo dans la page de conversation avec une personne, mettre le nom de l'interlocuteur #}
+                    <h3>{{ chat_title }}</h3>
                 </div>
             </div>
             <div class="chat-actions">

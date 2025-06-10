@@ -102,6 +102,12 @@ body {
     overflow-y: auto;
 }
 
+.conversation-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
 .conversation {
     display: flex;
     align-items: center;
