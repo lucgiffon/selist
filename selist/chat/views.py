@@ -35,18 +35,23 @@ def main(request, trade_id=None):
     
     # Get user's conversations if authenticated
     user_trades = []
+    agora_last_message = None
     if request.user.is_authenticated:
         user_trades = Trade.objects.filter(
             models.Q(initiator=request.user) | 
             models.Q(message__user=request.user)
         ).distinct().select_related('initiator').prefetch_related('message_set').order_by('-created_at')
+        
+        # Get the last initiation message for Agora subtitle
+        agora_last_message = Message.objects.filter(type="initiation").select_related("trade", "user").order_by('-created_at').first()
     
     return render(
         request, "chat/main.html", {
             "initiation_messages": initiation_messages,
             "user_trades": user_trades,
             "current_trade": current_trade,
-            "chat_title": chat_title
+            "chat_title": chat_title,
+            "agora_last_message": agora_last_message
         }
     )
 

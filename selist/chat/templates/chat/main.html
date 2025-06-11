@@ -41,7 +41,7 @@
                     </div>
                     <div class="conversation-info">
                         <h4>Agora</h4>
-                        <p>Conversations publiques</p>
+                        <p>{% if agora_last_message %}{{ agora_last_message.text|truncatechars:50 }}{% else %}Conversations publiques{% endif %}</p>
                     </div>
                     <div class="conversation-time"></div>
                 </div>
