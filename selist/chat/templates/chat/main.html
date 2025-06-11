@@ -41,9 +41,11 @@
                     </div>
                     <div class="conversation-info">
                         <h4>Agora</h4>
-                        <p>{% if agora_last_message %}{{ agora_last_message.text|truncatechars:50 }}{% else %}Conversations publiques{% endif %}</p>
+                        <p>{% if agora_last_message %}{{ agora_last_message.text }}{% else %}Conversations publiques{% endif %}</p>
                     </div>
-                    <div class="conversation-time"></div>
+                    <div class="conversation-time">
+                        {{ agora_last_message.created_at|date:"d/m/Y" }}
+                    </div>
                 </div>
             </a>
             
@@ -57,11 +59,11 @@
                                 <img src="https://ui-avatars.com/api/?name={{ trade.initiator.username }}&background=FF5722&color=fff" alt="{{ trade.initiator.username }}">
                             </div>
                             <div class="conversation-info">
-                                <h4>{{ trade.get_type_display }} - {% if initiation_msg %}{{ initiation_msg.text|truncatechars:30 }}{% endif %}</h4>
-                                <p>{% if last_msg %}{{ last_msg.text|truncatechars:50 }}{% endif %}</p>
+                                <h4>{{ trade.get_type_display }} - {% if initiation_msg %}{{ initiation_msg.text }}{% endif %}</h4>
+                                <p>{% if last_msg %}{{ last_msg.text }}{% endif %}</p>
                             </div>
                             <div class="conversation-time">
-                                {% if last_msg %}{{ last_msg.created_at|date:"d/m" }}{% endif %}
+                                {% if last_msg %}{{ last_msg.created_at|date:"d/m/Y" }}{% else %}{{ trade.created_at|date:"d/m/Y" }}{% endif %}
                             </div>
                         </div>
                     </a>
