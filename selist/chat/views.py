@@ -95,3 +95,46 @@ def create_trade(request):
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+@login_required
+def send_message(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+        message_text = data.get('message', '').strip()
+        trade_id = data.get('trade_id')
+        
+        if not message_text:
+            return JsonResponse({'error': 'Message text is required'}, status=400)
+        
+        if not trade_id:
+            return JsonResponse({'error': 'Trade ID is required'}, status=400)
+        
+        try:
+            trade = Trade.objects.get(id=trade_id)
+        except Trade.DoesNotExist:
+            return JsonResponse({'error': 'Trade not found'}, status=404)
+        
+        message = Message.objects.create(
+            text=message_text,
+            user=request.user,
+            trade=trade,
+            type='text'
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'message_id': message.id,
+            'message_text': message.text,
+            'message_time': message.created_at.strftime('%d-%m-%Y | %H:%M'),
+            'user_name': message.user.username
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

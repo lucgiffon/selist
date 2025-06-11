@@ -7,8 +7,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const cancelBtn = document.getElementById('cancel-btn');
     const emojiBtn = document.getElementById('emoji-btn');
     const emojiPicker = document.getElementById('emoji-picker');
+    const chatMessages = document.getElementById('chat-messages');
     
     let currentMessage = '';
+    const isInAgora = currentTradeId === null;
+
+    // Scroll to bottom on page load
+    function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    scrollToBottom();
 
     // Emoji picker functionality
     if (emojiBtn && emojiPicker) {
@@ -44,11 +52,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle send button click
     sendButton.addEventListener('click', function() {
-        // if no message is input, clicking "send" doesn't trigger the popup
         const message = messageInput.value.trim();
         if (message) {
             currentMessage = message;
-            modal.style.display = 'flex';
+            
+            if (isInAgora) {
+                // In Agora: show modal to create trade
+                modal.style.display = 'flex';
+            } else {
+                // In Trade conversation: send text message directly
+                sendTextMessage(message);
+            }
         }
     });
 
@@ -61,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Handle trade type selection
+    // Handle trade type selection (only for Agora)
     demandBtn.addEventListener('click', function() {
         createTrade('demand');
     });
@@ -70,7 +84,6 @@ document.addEventListener('DOMContentLoaded', function() {
         createTrade('offer');
     });
 
-    // Handle cancel button
     cancelBtn.addEventListener('click', function() {
         closeModal();
     });
@@ -83,7 +96,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Handle escape key
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && modal.style.display === 'flex') {
             closeModal();
@@ -96,7 +108,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function createTrade(type) {
-        // Disable buttons during request
         demandBtn.disabled = true;
         offerBtn.disabled = true;
         cancelBtn.disabled = true;
@@ -114,6 +125,42 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                location.reload();
+            } else {
+                alert('Erreur: ' + (data.error || 'Une erreur est survenue'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Erreur de connexion');
+        })
+        .finally(() => {
+            demandBtn.disabled = false;
+            offerBtn.disabled = false;
+            cancelBtn.disabled = false;
+            
+            closeModal();
+            messageInput.value = '';
+        });
+    }
+
+    function sendTextMessage(message) {
+        sendButton.disabled = true;
+        messageInput.disabled = true;
+
+        fetch(sendMessageUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: message,
+                trade_id: currentTradeId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
                 // Reload page to show new message
                 location.reload();
             } else {
@@ -125,13 +172,9 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Erreur de connexion');
         })
         .finally(() => {
-            // Re-enable buttons
-            demandBtn.disabled = false;
-            offerBtn.disabled = false;
-            cancelBtn.disabled = false;
-            
-            closeModal();
-            messageInput.value = '';
+            // Re-enable inputs
+            sendButton.disabled = false;
+            messageInput.disabled = false;
         });
     }
 });

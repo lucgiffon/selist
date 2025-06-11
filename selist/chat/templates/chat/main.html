@@ -172,8 +172,9 @@
 </div>
 
 <script>
-    // Pass Django URL to JavaScript
     const createTradeUrl = "{% url 'chat:create_trade' %}";
+    const sendMessageUrl = "{% url 'chat:send_message' %}";
+    const currentTradeId = {% if current_trade %}{{ current_trade.id }}{% else %}null{% endif %};
 </script>
 <script src="{% static 'js/chat.js' %}"></script>
 {% endif %}
