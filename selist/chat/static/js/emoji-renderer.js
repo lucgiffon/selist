@@ -32,4 +32,10 @@ document.addEventListener('DOMContentLoaded', function() {
     messageTexts.forEach(element => {
         element.innerHTML = renderEmojis(element.textContent);
     });
+
+    // Render emojis in conversation titles and subtitles
+    const conversationTitles = document.querySelectorAll('.conversation-info h4, .conversation-info p');
+    conversationTitles.forEach(element => {
+        element.innerHTML = renderEmojis(element.textContent);
+    });
 });
