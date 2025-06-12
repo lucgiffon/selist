@@ -85,7 +85,7 @@
                     {% endif %}
                 </div>
                 <div class="contact-info">
-                    <h3>{{ chat_title }}</h3>
+                    <h3>{% if current_trade %}{{ current_trade.get_type_display }} - {{ current_trade.message_set.first.text }}{% else %}Agora{% endif %}</h3>
                 </div>
             </div>
             <div class="chat-actions">

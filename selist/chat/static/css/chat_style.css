@@ -181,12 +181,24 @@ body {
 .chat-contact {
     display: flex;
     align-items: center;
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+}
+
+.contact-info {
+    min-width: 0;
+    overflow: hidden;
+    flex: 1;
 }
 
 .contact-info h3 {
     font-size: 16px;
     font-weight: 600;
     color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .contact-info p {
