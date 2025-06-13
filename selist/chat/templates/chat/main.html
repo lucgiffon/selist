@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block extra_headers %}
-    <link rel="stylesheet" href="{% static 'css/chat_style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/modal.css' %}">
+    <link rel="stylesheet" href="{% static 'chat/css/chat_style.css' %}">
+    <link rel="stylesheet" href="{% static 'chat/css/modal.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
@@ -159,7 +159,7 @@
 </div>
 
 <!-- Emoji rendering for all users -->
-<script src="{% static 'js/emoji-renderer.js' %}"></script>
+<script src="{% static 'chat/js/emoji-renderer.js' %}"></script>
 
 {% if user.is_authenticated %}
 <!-- Modal popup for trade type selection -->
@@ -186,6 +186,6 @@
     const sendMessageUrl = "{% url 'chat:send_message' %}";
     const currentTradeId = {% if current_trade %}{{ current_trade.id }}{% else %}null{% endif %};
 </script>
-<script src="{% static 'js/chat.js' %}"></script>
+<script src="{% static 'chat/js/chat.js' %}"></script>
 {% endif %}
 {% endblock %}
