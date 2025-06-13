@@ -65,6 +65,10 @@ body {
     object-fit: cover;
 }
 
+.avatar a {
+    display: contents;
+}
+
 .user-info h3 {
     font-size: 16px;
     font-weight: 600;
@@ -183,7 +187,6 @@ body {
     align-items: center;
     min-width: 0;
     flex: 1;
-    overflow: hidden;
 }
 
 .contact-info {

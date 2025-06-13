@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Profil de {{ profile_user.username }}{% endblock %}
+
+{% block extra_headers %}
+    <link rel="stylesheet" href="{% static 'css/chat_style.css' %}">
+    <link rel="stylesheet" href="{% static 'users/css/profile.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-section">
+        <div class="profile-general">
+            <div class="profile-avatar">
+                <img src="https://ui-avatars.com/api/?name={{ profile_user.username }}&background=0D8ABC&color=fff" alt="{{ profile_user.username }}">
+            </div>
+            <div class="profile-info">
+                <h2>
+                    {{ profile_user.username }}
+                    {% if profile_user.is_staff %}
+                        <span class="staff-badge"><i class="fas fa-crown" title="Staff"></i></span>
+                    {% endif %}
+                </h2>
+                <p><strong>Membre depuis :</strong> {{ profile_user.date_joined|date:"d/m/Y" }}</p>
+                {% if profile_user.last_login %}
+                    <p><strong>Dernière connexion :</strong> {{ profile_user.last_login|date:"d/m/Y H:i" }}</p>
+                {% else %}
+                    <p><strong>Dernière connexion :</strong> Jamais connecté</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="profile-section profile-summary">
+        <h3>Bilan</h3>
+        <div class="user-value">{{ profile_user.value }} points</div>
+    </div>
+    
+    <div class="profile-section">
+        <div class="activity-header">
+            <h3>Activité</h3>
+            <form method="get" class="filter-checkbox">
+                <input type="checkbox" id="initiator_only" name="initiator_only" value="1" 
+                       {% if show_initiator_only %}checked{% endif %} 
+                       onchange="this.form.submit()">
+                <label for="initiator_only">Uniquement les trades initiés</label>
+                {% if request.GET.page %}
+                    <input type="hidden" name="page" value="{{ request.GET.page }}">
+                {% endif %}
+            </form>
+        </div>
+        
+        {% if page_obj.object_list %}
+            {% for trade_data in page_obj.object_list %}
+                <a href="{% url 'chat:conversation' trade_data.trade.id %}" class="trade-item">
+                    <div class="trade-avatar">
+                        <img src="https://ui-avatars.com/api/?name={{ trade_data.trade.initiator.username }}&background=FF5722&color=fff" alt="{{ trade_data.trade.initiator.username }}">
+                    </div>
+                    <div class="trade-info">
+                        <div class="trade-title">
+                            {{ trade_data.trade.message_set.first.text|truncatechars:50 }}
+                        </div>
+                        <div class="trade-meta">
+                            <span class="trade-badge {{ trade_data.trade.type }}">
+                                {{ trade_data.trade.get_type_display }}
+                            </span>
+                            {% if trade_data.is_initiator %}
+                                <span class="trade-badge initiator">Initiateur</span>
+                            {% endif %}
+                        </div>
+                        <div class="trade-date">
+                            Dernier message : {{ trade_data.last_message_date|date:"d/m/Y H:i" }}
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+            
+            {% if page_obj.has_other_pages %}
+                <div class="pagination">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1{% if show_initiator_only %}&initiator_only=1{% endif %}">&laquo; Première</a>
+                        <a href="?page={{ page_obj.previous_page_number }}{% if show_initiator_only %}&initiator_only=1{% endif %}">Précédente</a>
+                    {% endif %}
+                    
+                    <span class="current">
+                        Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}
+                    </span>
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if show_initiator_only %}&initiator_only=1{% endif %}">Suivante</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}{% if show_initiator_only %}&initiator_only=1{% endif %}">Dernière &raquo;</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="no-trades">
+                {% if show_initiator_only %}
+                    Aucun trade initié par cet utilisateur.
+                {% else %}
+                    Aucune activité trouvée pour cet utilisateur.
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

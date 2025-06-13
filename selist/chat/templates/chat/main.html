@@ -79,13 +79,21 @@
             <div class="chat-contact">
                 <div class="avatar">
                     {% if current_trade %}
-                        <img src="https://ui-avatars.com/api/?name={{ current_trade.initiator.username }}&background=FF5722&color=fff" alt="{{ current_trade.initiator.username }}">
+                        <a href="{% url 'users:profile' current_trade.initiator.id %}">
+                            <img src="https://ui-avatars.com/api/?name={{ current_trade.initiator.username }}&background=FF5722&color=fff" alt="{{ current_trade.initiator.username }}">
+                        </a>
                     {% else %}
                         <img src="https://ui-avatars.com/api/?name=Agora&background=4CAF50&color=fff" alt="Agora">
                     {% endif %}
                 </div>
                 <div class="contact-info">
-                    <h3>{% if current_trade %}{{ current_trade.get_type_display }} - {{ current_trade.message_set.first.text }}{% else %}Agora{% endif %}</h3>
+                    <h3>
+                        {% if current_trade %}
+                            <a href="{% url 'users:profile' current_trade.initiator.id %}" style="text-decoration: none; color: inherit;">{{ current_trade.get_type_display }} - {{ current_trade.message_set.first.text }}</a>
+                        {% else %}
+                            Agora
+                        {% endif %}
+                    </h3>
                 </div>
             </div>
             <div class="chat-actions">
@@ -104,7 +112,9 @@
                 </div>
                 {% if msg.user != request.user %}
                 <div class="avatar">
-                    <img src="https://ui-avatars.com/api/?name={{ msg.user.username }}&background=4CAF50&color=fff" alt="{{ msg.user.username }}"> {# todo récupérer une fois et stocker #}
+                    <a href="{% url 'users:profile' msg.user.id %}">
+                        <img src="https://ui-avatars.com/api/?name={{ msg.user.username }}&background=4CAF50&color=fff" alt="{{ msg.user.username }}"> {# todo récupérer une fois et stocker #}
+                    </a>
                 </div>
                 {% endif %}
             </div>
