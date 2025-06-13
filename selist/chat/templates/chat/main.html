@@ -89,7 +89,7 @@
                 <div class="contact-info">
                     <h3>
                         {% if current_trade %}
-                            <a href="{% url 'users:profile' current_trade.initiator.id %}" style="text-decoration: none; color: inherit;">{{ current_trade.get_type_display }} - {{ current_trade.message_set.first.text }}</a>
+                            {{ current_trade.get_type_display }} - {{ current_trade.message_set.first.text }}
                         {% else %}
                             Agora
                         {% endif %}

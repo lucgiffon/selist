@@ -4,7 +4,7 @@
 {% block title %}Profil de {{ profile_user.username }}{% endblock %}
 
 {% block extra_headers %}
-    <link rel="stylesheet" href="{% static 'css/chat_style.css' %}">
+    <link rel="stylesheet" href="{% static 'chat/css/chat_style.css' %}">
     <link rel="stylesheet" href="{% static 'users/css/profile.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock %}
@@ -41,11 +41,21 @@
     <div class="profile-section">
         <div class="activity-header">
             <h3>Activité</h3>
-            <form method="get" class="filter-checkbox">
-                <input type="checkbox" id="initiator_only" name="initiator_only" value="1" 
-                       {% if show_initiator_only %}checked{% endif %} 
-                       onchange="this.form.submit()">
-                <label for="initiator_only">Uniquement les trades initiés</label>
+            <form method="get" class="filter-form">
+                <div class="filter-group">
+                    <label for="trade_type">Type de trade :</label>
+                    <select id="trade_type" name="trade_type" onchange="this.form.submit()">
+                        <option value="both" {% if trade_type_filter == "both" %}selected{% endif %}>Tous</option>
+                        <option value="offer" {% if trade_type_filter == "offer" %}selected{% endif %}>Offres</option>
+                        <option value="demand" {% if trade_type_filter == "demand" %}selected{% endif %}>Demandes</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <input type="checkbox" id="initiator_only" name="initiator_only" value="1" 
+                           {% if show_initiator_only %}checked{% endif %} 
+                           onchange="this.form.submit()">
+                    <label for="initiator_only">Uniquement les trades initiés</label>
+                </div>
                 {% if request.GET.page %}
                     <input type="hidden" name="page" value="{{ request.GET.page }}">
                 {% endif %}
@@ -80,8 +90,8 @@
             {% if page_obj.has_other_pages %}
                 <div class="pagination">
                     {% if page_obj.has_previous %}
-                        <a href="?page=1{% if show_initiator_only %}&initiator_only=1{% endif %}">&laquo; Première</a>
-                        <a href="?page={{ page_obj.previous_page_number }}{% if show_initiator_only %}&initiator_only=1{% endif %}">Précédente</a>
+                        <a href="?page=1{% if show_initiator_only %}&initiator_only=1{% endif %}{% if trade_type_filter != "both" %}&trade_type={{ trade_type_filter }}{% endif %}">&laquo; Première</a>
+                        <a href="?page={{ page_obj.previous_page_number }}{% if show_initiator_only %}&initiator_only=1{% endif %}{% if trade_type_filter != "both" %}&trade_type={{ trade_type_filter }}{% endif %}">Précédente</a>
                     {% endif %}
                     
                     <span class="current">
@@ -89,8 +99,8 @@
                     </span>
                     
                     {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}{% if show_initiator_only %}&initiator_only=1{% endif %}">Suivante</a>
-                        <a href="?page={{ page_obj.paginator.num_pages }}{% if show_initiator_only %}&initiator_only=1{% endif %}">Dernière &raquo;</a>
+                        <a href="?page={{ page_obj.next_page_number }}{% if show_initiator_only %}&initiator_only=1{% endif %}{% if trade_type_filter != "both" %}&trade_type={{ trade_type_filter }}{% endif %}">Suivante</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}{% if show_initiator_only %}&initiator_only=1{% endif %}{% if trade_type_filter != "both" %}&trade_type={{ trade_type_filter }}{% endif %}">Dernière &raquo;</a>
                     {% endif %}
                 </div>
             {% endif %}

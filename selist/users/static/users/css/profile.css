@@ -65,15 +65,44 @@
     margin-bottom: 20px;
 }
 
-.filter-checkbox {
+.filter-form {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-group {
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.filter-checkbox input[type="checkbox"] {
+.filter-group label {
+    font-weight: 500;
+    color: #333;
+}
+
+.filter-group select {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: #0D8ABC;
+    box-shadow: 0 0 0 2px rgba(13, 138, 188, 0.2);
+}
+
+.filter-group input[type="checkbox"] {
     width: 18px;
     height: 18px;
+    cursor: pointer;
 }
 
 .trade-item {

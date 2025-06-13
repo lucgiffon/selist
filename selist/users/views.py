@@ -40,11 +40,15 @@ def profile_view(request, user_id):
     profile_user = get_object_or_404(Seliste, id=user_id)
 
     show_initiator_only = request.GET.get("initiator_only") == "1"
+    trade_type_filter = request.GET.get("trade_type", "both")
 
     user_trades_query = Trade.objects.filter(message__user=profile_user).distinct()
 
     if show_initiator_only:
         user_trades_query = user_trades_query.filter(initiator=profile_user)
+    
+    if trade_type_filter in ["offer", "demand"]:
+        user_trades_query = user_trades_query.filter(type=trade_type_filter)
 
     user_trades = []
     for trade in user_trades_query:
@@ -73,6 +77,7 @@ def profile_view(request, user_id):
         "profile_user": profile_user,
         "page_obj": page_obj,
         "show_initiator_only": show_initiator_only,
+        "trade_type_filter": trade_type_filter,
     }
 
     return render(request, "users/profile.html", context)
