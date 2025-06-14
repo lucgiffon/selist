@@ -8,7 +8,7 @@ sys.path.append("/home/lucgiffon/PycharmProjects/selist/selist")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "selist.settings")
 django.setup()
 
-from chat.models import Proposal, Finalisation, Trade, Message
+from chat.models import Proposal, Finalisation, Trade, TradeMessage
 from users.models import Seliste
 
 with transaction.atomic():
@@ -20,7 +20,7 @@ with transaction.atomic():
     trade2 = Trade.objects.create(initiator=seliste1, type="demand")
     trade3 = Trade.objects.create(initiator=seliste2, type="demand")
 
-    message_trade1 = Message.objects.create(
+    message_trade1 = TradeMessage.objects.create(
         text="J'ai un peu de temps libre pour aider",
         user=seliste1,
         trade=trade1,
@@ -40,13 +40,13 @@ with transaction.atomic():
     # )
     #
 
-    message_trade2 = Message.objects.create(
+    message_trade2 = TradeMessage.objects.create(
         text="J'ai besoin d'aide",
         user=seliste1,
         trade=trade1,
         type="initiation",
     )
-    message_trade3 = Message.objects.create(
+    message_trade3 = TradeMessage.objects.create(
         text="J'ai besoin d'aide moi aussi",
         user=seliste2,
         trade=trade1,

@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 
-from chat.models import Message, Trade
+from chat.models import TradeMessage, Trade
 from .forms import SelisteCreationForm
 from .models import Seliste
 
@@ -42,18 +42,18 @@ def profile_view(request, user_id):
     show_initiator_only = request.GET.get("initiator_only") == "1"
     trade_type_filter = request.GET.get("trade_type", "both")
 
-    user_trades_query = Trade.objects.filter(message__user=profile_user).distinct()
+    user_trades_query = Trade.objects.filter(trademessage__user=profile_user).distinct()
 
     if show_initiator_only:
         user_trades_query = user_trades_query.filter(initiator=profile_user)
-    
+
     if trade_type_filter in ["offer", "demand"]:
         user_trades_query = user_trades_query.filter(type=trade_type_filter)
 
     user_trades = []
     for trade in user_trades_query:
         last_user_message = (
-            Message.objects.filter(trade=trade, user=profile_user)
+            TradeMessage.objects.filter(trade=trade, user=profile_user)
             .order_by("-created_at")
             .first()
         )

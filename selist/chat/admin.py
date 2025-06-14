@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from .models import Proposal, Finalisation, Trade, Message
+from .models import Proposal, Finalisation, Trade, TradeMessage
 
 # Register your models here.
 admin.site.register(Proposal)
-admin.site.register(Message)
+admin.site.register(TradeMessage)
 admin.site.register(Finalisation)
 admin.site.register(Trade)
