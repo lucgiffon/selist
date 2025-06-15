@@ -29,6 +29,14 @@
                 {% else %}
                     <p><strong>Dernière connexion :</strong> Jamais connecté</p>
                 {% endif %}
+                
+                {% if user.is_authenticated and user != profile_user %}
+                    <div class="profile-actions">
+                        <a href="{% url 'chat:start_private' profile_user.id %}" class="btn-private-message">
+                            <i class="fas fa-envelope"></i> Envoyer un message privé
+                        </a>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -64,13 +72,13 @@
         
         {% if page_obj.object_list %}
             {% for trade_data in page_obj.object_list %}
-                <a href="{% url 'chat:conversation' trade_data.trade.id %}" class="trade-item">
+                <a href="{% url 'chat:conversation' trade_data.conversation.id %}" class="trade-item">
                     <div class="trade-avatar">
                         <img src="https://ui-avatars.com/api/?name={{ trade_data.trade.initiator.username }}&background=FF5722&color=fff" alt="{{ trade_data.trade.initiator.username }}">
                     </div>
                     <div class="trade-info">
                         <div class="trade-title">
-                            {{ trade_data.trade.message_set.first.text|truncatechars:50 }}
+                            {{ trade_data.trade.trademessage_set.first.text|truncatechars:50 }}
                         </div>
                         <div class="trade-meta">
                             <span class="trade-badge {{ trade_data.trade.type }}">

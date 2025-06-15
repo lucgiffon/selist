@@ -47,6 +47,33 @@
     margin-left: 10px;
 }
 
+.profile-actions {
+    margin-top: 15px;
+}
+
+.btn-private-message {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background-color: #0D8ABC;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.btn-private-message:hover {
+    background-color: #0a6b96;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-private-message i {
+    font-size: 14px;
+}
+
 .profile-summary {
     text-align: center;
 }

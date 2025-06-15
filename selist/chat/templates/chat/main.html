@@ -35,7 +35,7 @@
         </div>
         <div class="conversation-list">
             <a href="{% url 'chat:main' %}" class="conversation-link">
-                <div class="conversation {% if current_trade is None %}active{% endif %}">
+                <div class="conversation {% if current_conversation is None %}active{% endif %}">
                     <div class="avatar">
                         <img src="https://ui-avatars.com/api/?name=Agora&background=4CAF50&color=fff" alt="Agora">
                     </div>
@@ -44,31 +44,59 @@
                         <p>{% if agora_last_message %}{{ agora_last_message.text }}{% else %}Conversations publiques{% endif %}</p>
                     </div>
                     <div class="conversation-time">
-                        {{ agora_last_message.created_at|date:"d/m/Y" }}
+                        {% if agora_last_message %}{{ agora_last_message.created_at|date:"d/m/Y" }}{% endif %}
                     </div>
                 </div>
             </a>
             
-            {% if user.is_authenticated and user_trades %}
-                {% for trade in user_trades %}
-                    {% with trade.message_set.first as initiation_msg %}
-                    {% with trade.message_set.last as last_msg %}
-                    <a href="{% url 'chat:conversation' trade.id %}" class="conversation-link">
-                        <div class="conversation {% if current_trade and current_trade.id == trade.id %}active{% endif %}">
-                            <div class="avatar">
-                                <img src="https://ui-avatars.com/api/?name={{ trade.initiator.username }}&background=FF5722&color=fff" alt="{{ trade.initiator.username }}">
+            {% if user.is_authenticated and user_conversations %}
+                {% for conversation in user_conversations %}
+                    {% if conversation.conversation_type == "trade" %}
+                        {% with conversation.trade.trademessage_set.first as initiation_msg %}
+                        {% with conversation.get_last_message as last_msg %}
+                        <a href="{% url 'chat:conversation' conversation.id %}" class="conversation-link">
+                            <div class="conversation {% if current_conversation and current_conversation.id == conversation.id %}active{% endif %}">
+                                <div class="avatar">
+                                    <img src="https://ui-avatars.com/api/?name={{ conversation.trade.initiator.username }}&background=FF5722&color=fff" alt="{{ conversation.trade.initiator.username }}">
+                                </div>
+                                <div class="conversation-info">
+                                    <h4>{{ conversation.trade.get_type_display }} - {% if initiation_msg %}{{ initiation_msg.text|truncatewords:5 }}{% endif %}</h4>
+                                    <p>{% if last_msg %}{{ last_msg.text|truncatewords:8 }}{% endif %}</p>
+                                </div>
+                                <div class="conversation-time">
+                                    {% if last_msg %}{{ last_msg.created_at|date:"d/m/Y" }}{% else %}{{ conversation.created_at|date:"d/m/Y" }}{% endif %}
+                                </div>
                             </div>
-                            <div class="conversation-info">
-                                <h4>{{ trade.get_type_display }} - {% if initiation_msg %}{{ initiation_msg.text }}{% endif %}</h4>
-                                <p>{% if last_msg %}{{ last_msg.text }}{% endif %}</p>
+                        </a>
+                        {% endwith %}
+                        {% endwith %}
+                    {% elif conversation.conversation_type == "private" %}
+                        {% with conversation.get_last_message as last_msg %}
+                        <a href="{% url 'chat:conversation' conversation.id %}" class="conversation-link">
+                            <div class="conversation {% if current_conversation and current_conversation.id == conversation.id and current_conversation.conversation_type == "private" %}active{% endif %}">
+                                <div class="avatar">
+                                    {% for participant in conversation.participants.all %}
+                                        {% if participant != user %}
+                                            <img src="https://ui-avatars.com/api/?name={{ participant.username }}&background=9C27B0&color=fff" alt="{{ participant.username }}">
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="conversation-info">
+                                    <h4><i class="fas fa-envelope"></i>
+                                        Conversation avec
+                                        {% for participant in conversation.participants.all %}
+                                            {% if participant != user %}{{ participant.username }}{% endif %}
+                                        {% endfor %}
+                                    </h4>
+                                    <p>{% if last_msg %}{{ last_msg.text|truncatewords:8 }}{% else %}Nouvelle conversation{% endif %}</p>
+                                </div>
+                                <div class="conversation-time">
+                                    {% if last_msg %}{{ last_msg.created_at|date:"d/m/Y" }}{% else %}{{ conversation.created_at|date:"d/m/Y" }}{% endif %}
+                                </div>
                             </div>
-                            <div class="conversation-time">
-                                {% if last_msg %}{{ last_msg.created_at|date:"d/m/Y" }}{% else %}{{ trade.created_at|date:"d/m/Y" }}{% endif %}
-                            </div>
-                        </div>
-                    </a>
-                    {% endwith %}
-                    {% endwith %}
+                        </a>
+                        {% endwith %}
+                    {% endif %}
                 {% endfor %}
             {% endif %}
         </div>
@@ -78,22 +106,24 @@
         <div class="chat-header">
             <div class="chat-contact">
                 <div class="avatar">
-                    {% if current_trade %}
-                        <a href="{% url 'users:profile' current_trade.initiator.id %}">
-                            <img src="https://ui-avatars.com/api/?name={{ current_trade.initiator.username }}&background=FF5722&color=fff" alt="{{ current_trade.initiator.username }}">
+                    {% if current_conversation and current_conversation.conversation_type == "trade" %}
+                        <a href="{% url 'users:profile' current_conversation.trade.initiator.id %}">
+                            <img src="https://ui-avatars.com/api/?name={{ current_conversation.trade.initiator.username }}&background=FF5722&color=fff" alt="{{ current_conversation.trade.initiator.username }}">
                         </a>
+                    {% elif current_conversation and current_conversation.conversation_type == "private" %}
+                        {% for participant in current_conversation.participants.all %}
+                            {% if participant != user %}
+                                <a href="{% url 'users:profile' participant.id %}">
+                                    <img src="https://ui-avatars.com/api/?name={{ participant.username }}&background=9C27B0&color=fff" alt="{{ participant.username }}">
+                                </a>
+                            {% endif %}
+                        {% endfor %}
                     {% else %}
                         <img src="https://ui-avatars.com/api/?name=Agora&background=4CAF50&color=fff" alt="Agora">
                     {% endif %}
                 </div>
                 <div class="contact-info">
-                    <h3>
-                        {% if current_trade %}
-                            {{ current_trade.get_type_display }} - {{ current_trade.message_set.first.text }}
-                        {% else %}
-                            Agora
-                        {% endif %}
-                    </h3>
+                    <h3>{{ chat_title }}</h3>
                 </div>
             </div>
             <div class="chat-actions">
@@ -104,20 +134,36 @@
         </div>
         
         <div class="chat-messages" id="chat-messages">
-            {%  for msg in initiation_messages %}
-            <div class="chat-message {% if msg.user == request.user %}user{% else %}other{% endif %}">
-                <div class="message">
-                    <p class="message-text">{{ msg.text }}</p>
-                    <span class="message-time">{{ msg.created_at|date:"d-m-Y | H:i" }}</span>
-                </div>
-                {% if msg.user != request.user %}
-                <div class="avatar">
-                    <a href="{% url 'users:profile' msg.user.id %}">
-                        <img src="https://ui-avatars.com/api/?name={{ msg.user.username }}&background=4CAF50&color=fff" alt="{{ msg.user.username }}"> {# todo récupérer une fois et stocker #}
-                    </a>
-                </div>
+            {% for msg in current_messages %}
+                {% if msg.user %}
+                    <div class="chat-message {% if msg.user == request.user %}user{% else %}other{% endif %}">
+                        <div class="message">
+                            <p class="message-text">{{ msg.text }}</p>
+                            <span class="message-time">{{ msg.created_at|date:"d-m-Y | H:i" }}</span>
+                        </div>
+                        {% if msg.user != request.user %}
+                        <div class="avatar">
+                            <a href="{% url 'users:profile' msg.user.id %}">
+                                <img src="https://ui-avatars.com/api/?name={{ msg.user.username }}&background=4CAF50&color=fff" alt="{{ msg.user.username }}">
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                {% elif msg.sender %}
+                    <div class="chat-message {% if msg.sender == request.user %}user{% else %}other{% endif %}">
+                        <div class="message">
+                            <p class="message-text">{{ msg.text }}</p>
+                            <span class="message-time">{{ msg.created_at|date:"d-m-Y | H:i" }}</span>
+                        </div>
+                        {% if msg.sender != request.user %}
+                        <div class="avatar">
+                            <a href="{% url 'users:profile' msg.sender.id %}">
+                                <img src="https://ui-avatars.com/api/?name={{ msg.sender.username }}&background=9C27B0&color=fff" alt="{{ msg.sender.username }}">
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
                 {% endif %}
-            </div>
             {% endfor %}
         </div>
 
@@ -184,7 +230,11 @@
 <script>
     const createTradeUrl = "{% url 'chat:create_trade' %}";
     const sendMessageUrl = "{% url 'chat:send_message' %}";
-    const currentTradeId = {% if current_trade %}{{ current_trade.id }}{% else %}null{% endif %};
+    const currentConversation = {% if current_conversation %}{
+        id: {{ current_conversation.id }}, 
+        type: "{{ current_conversation.conversation_type }}"
+    }{% else %}null{% endif %};
+    const recipientId = {% if recipient_id %}{{ recipient_id }}{% else %}null{% endif %};
 </script>
 <script src="{% static 'chat/js/chat.js' %}"></script>
 {% endif %}

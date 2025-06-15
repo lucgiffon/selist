@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatMessages = document.getElementById('chat-messages');
     
     let currentMessage = '';
-    const isInAgora = currentTradeId === null;
+    const isInAgora = currentConversation === null && recipientId === null;
 
     // Scroll to bottom on page load
     function scrollToBottom() {
@@ -148,21 +148,38 @@ document.addEventListener('DOMContentLoaded', function() {
         sendButton.disabled = true;
         messageInput.disabled = true;
 
+        // Prepare the request body based on conversation type
+        let requestBody = {
+            message: message
+        };
+
+        if (currentConversation) {
+            // Existing conversation (trade or private)
+            requestBody.conversation_type = currentConversation.type;
+            requestBody.conversation_id = currentConversation.id;
+        } else if (recipientId) {
+            // New private conversation
+            requestBody.conversation_type = 'private';
+            requestBody.recipient_id = recipientId;
+        }
+
         fetch(sendMessageUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                message: message,
-                trade_id: currentTradeId
-            })
+            body: JSON.stringify(requestBody)
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Reload page to show new message
-                location.reload();
+                // If this was a new private conversation, redirect to the conversation
+                if (data.conversation_id && !currentConversation) {
+                    window.location.href = `/chat/conversation/${data.conversation_id}/`;
+                } else {
+                    // Reload page to show new message
+                    location.reload();
+                }
             } else {
                 alert('Erreur: ' + (data.error || 'Une erreur est survenue'));
             }
