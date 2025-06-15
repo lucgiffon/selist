@@ -42,16 +42,23 @@ def profile_view(request, user_id):
     show_initiator_only = request.GET.get("initiator_only") == "1"
     trade_type_filter = request.GET.get("trade_type", "both")
 
-    trade_conversations_query = Conversation.objects.filter(
-        conversation_type="trade",
-        participants=profile_user
-    ).select_related("trade").prefetch_related("trade__trademessage_set")
+    trade_conversations_query = (
+        Conversation.objects.filter(
+            conversation_type="trade", participants=profile_user
+        )
+        .select_related("trade")
+        .prefetch_related("trade__trademessage_set")
+    )
 
     if show_initiator_only:
-        trade_conversations_query = trade_conversations_query.filter(trade__initiator=profile_user)
+        trade_conversations_query = trade_conversations_query.filter(
+            trade__initiator=profile_user
+        )
 
     if trade_type_filter in ["offer", "demand"]:
-        trade_conversations_query = trade_conversations_query.filter(trade__type=trade_type_filter)
+        trade_conversations_query = trade_conversations_query.filter(
+            trade__type=trade_type_filter
+        )
 
     user_trades = []
     for conversation in trade_conversations_query:
