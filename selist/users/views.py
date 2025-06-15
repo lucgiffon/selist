@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 
-from chat.models import TradeMessage, Trade
+from chat.models import TradeMessage, Conversation
 from .forms import SelisteCreationForm
 from .models import Seliste
 
@@ -42,16 +42,20 @@ def profile_view(request, user_id):
     show_initiator_only = request.GET.get("initiator_only") == "1"
     trade_type_filter = request.GET.get("trade_type", "both")
 
-    user_trades_query = Trade.objects.filter(trademessage__user=profile_user).distinct()
+    trade_conversations_query = Conversation.objects.filter(
+        conversation_type="trade",
+        participants=profile_user
+    ).select_related("trade").prefetch_related("trade__trademessage_set")
 
     if show_initiator_only:
-        user_trades_query = user_trades_query.filter(initiator=profile_user)
+        trade_conversations_query = trade_conversations_query.filter(trade__initiator=profile_user)
 
     if trade_type_filter in ["offer", "demand"]:
-        user_trades_query = user_trades_query.filter(type=trade_type_filter)
+        trade_conversations_query = trade_conversations_query.filter(trade__type=trade_type_filter)
 
     user_trades = []
-    for trade in user_trades_query:
+    for conversation in trade_conversations_query:
+        trade = conversation.trade
         last_user_message = (
             TradeMessage.objects.filter(trade=trade, user=profile_user)
             .order_by("-created_at")
@@ -62,6 +66,7 @@ def profile_view(request, user_id):
             user_trades.append(
                 {
                     "trade": trade,
+                    "conversation": conversation,
                     "last_message_date": last_user_message.created_at,
                     "is_initiator": trade.initiator == profile_user,
                 }
