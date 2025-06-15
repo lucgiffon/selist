@@ -17,8 +17,7 @@ def main(request, conversation_id=None, recipient_id=None):
     chat_title = "Agora"
     display_agora = True
 
-    # Handle specific conversation views
-    if conversation_id:  # trade or private conversation
+    if conversation_id:
         try:
             current_conversation = Conversation.objects.get(id=conversation_id)
             if current_conversation.conversation_type == "trade":
@@ -47,7 +46,6 @@ def main(request, conversation_id=None, recipient_id=None):
             raise Http404("La conversation demandée n'existe pas.")
 
     elif recipient_id:
-        # Handle case where we want to start a private conversation
         try:
             recipient = User.objects.get(id=recipient_id)
 
@@ -60,11 +58,8 @@ def main(request, conversation_id=None, recipient_id=None):
             )
 
             if existing_conversation:
-                current_conversation = existing_conversation
-                current_messages = (
-                    PrivateMessage.objects.filter(conversation=current_conversation)
-                    .select_related("conversation", "sender", "recipient")
-                    .order_by("created_at")
+                return redirect(
+                    "chat:conversation", conversation_id=existing_conversation.id
                 )
             chat_title = f"Conversation avec {recipient.username}"
             display_agora = False
