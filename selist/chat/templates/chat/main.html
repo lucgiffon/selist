@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% load static %}
+{% load chat_filters %}
 
 {% block extra_headers %}
     <link rel="stylesheet" href="{% static 'chat/css/chat_style.css' %}">
@@ -127,6 +128,11 @@
                 </div>
             </div>
             <div class="chat-actions">
+                {% if current_conversation and current_conversation.conversation_type == "trade" and user.is_authenticated %}
+                    <button id="validate-trade-btn" class="validate-trade-btn">
+                        <i class="fas fa-check-circle"></i> Valider l'échange
+                    </button>
+                {% endif %}
 {#                <i class="fas fa-phone"></i>#} {# todo éventuellement permettre d'appeler #}
 {#                <i class="fas fa-video"></i>#}
 {#                <i class="fas fa-ellipsis-v"></i> #}
@@ -136,11 +142,39 @@
         <div class="chat-messages" id="chat-messages">
             {% for msg in current_messages %}
                 {% if msg.user %}
-                    <div class="chat-message {% if msg.user == request.user %}user{% else %}other{% endif %}">
+                    <div class="chat-message {% if msg.user == request.user %}user{% else %}other{% endif %} {% if msg.type == 'proposal' %}proposal-message{% elif msg.type == 'finalisation' %}finalization-message{% endif %}">
+                        {% if current_conversation is None %}
+                            <a href="{% url 'chat:conversation' msg.trade.conversation.id %}" style="display:contents; color:inherit; text-decoration:none; pointer-events:auto;">
+                        {% endif %}
                         <div class="message">
                             <p class="message-text">{{ msg.text }}</p>
+
+                            {% if msg.type == 'proposal' and proposals_by_message %}
+                                {% with proposals_by_message|get_item:msg.id as proposal %}
+                                    {% if proposal and proposal.sender == request.user and not proposal.accepted and not proposal.refused %}
+                                        <div class="proposal-actions">
+                                            <button class="proposal-btn accept-btn" data-proposal-id="{{ proposal.id }}">
+                                                <i class="fas fa-check"></i> Accepter
+                                            </button>
+                                            <button class="proposal-btn refuse-btn" data-proposal-id="{{ proposal.id }}">
+                                                <i class="fas fa-times"></i> Refuser
+                                            </button>
+                                        </div>
+                                    {% elif proposal and proposal.accepted %}
+                                        <div class="proposal-status accepted">
+                                            <i class="fas fa-check-circle"></i> Proposition acceptée
+                                        </div>
+                                    {% elif proposal and proposal.refused %}
+                                        <div class="proposal-status refused">
+                                            <i class="fas fa-times-circle"></i> Proposition refusée
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
+
                             <span class="message-time">{{ msg.created_at|date:"d-m-Y | H:i" }}</span>
                         </div>
+                        {% if current_conversation is None %}</a>{% endif %}
                         {% if msg.user != request.user %}
                         <div class="avatar">
                             <a href="{% url 'users:profile' msg.user.id %}">
@@ -227,14 +261,49 @@
     </div>
 </div>
 
+<!-- Modal popup for transaction validation -->
+<div id="transaction-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <h3 id="transaction-modal-title">Valider l'échange</h3>
+        <div id="transaction-form">
+            <div class="form-group">
+                <label id="transaction-amount-label" for="transaction-amount">Montant à transférer :</label>
+                <input type="number" id="transaction-amount" class="form-input" min="1" placeholder="Entrez le montant">
+            </div>
+            <div class="form-group" id="recipient-group">
+                <label id="transaction-target-label" for="transaction-recipient">Destinataire :</label>
+                <select id="transaction-recipient" class="form-input">
+                    <option value="">Choisir un destinataire</option>
+                </select>
+            </div>
+            <div class="form-group" id="fixed-recipient-group" style="display: none;">
+                <label id="transaction-fixed-target-label">Destinataire :</label>
+                <div id="fixed-recipient-name" class="fixed-recipient"></div>
+            </div>
+        </div>
+        <div class="modal-buttons">
+            <button id="confirm-transaction-btn" class="modal-btn modal-btn-primary">
+                <i class="fas fa-check"></i> <span id="confirm-btn-text">Confirmer</span>
+            </button>
+            <button id="cancel-transaction-btn" class="modal-btn modal-btn-cancel">
+                <i class="fas fa-times"></i> Annuler
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
     const createTradeUrl = "{% url 'chat:create_trade' %}";
     const sendMessageUrl = "{% url 'chat:send_message' %}";
     const currentConversation = {% if current_conversation %}{
         id: {{ current_conversation.id }}, 
-        type: "{{ current_conversation.conversation_type }}"
+        type: "{{ current_conversation.conversation_type }}"{% if current_trade %},
+        trade_id: {{ current_trade.id }},
+        trade_type: "{{ current_trade.type }}",
+        trade_initiator: {{ current_trade.initiator.id }}{% endif %}
     }{% else %}null{% endif %};
     const recipientId = {% if recipient_id %}{{ recipient_id }}{% else %}null{% endif %};
+    const currentUserId = {% if user.is_authenticated %}{{ user.id }}{% else %}null{% endif %};
 </script>
 <script src="{% static 'chat/js/chat.js' %}"></script>
 {% endif %}

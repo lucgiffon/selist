@@ -87,9 +87,27 @@ class Proposal(models.Model):
     trade = models.ForeignKey("Trade", on_delete=models.PROTECT)
     value = models.IntegerField()
     accepted = models.BooleanField(default=False)
+    refused = models.BooleanField(default=False)
+    trade_message = models.OneToOneField("TradeMessage", on_delete=models.CASCADE, null=True, blank=True)
 
 
 class Finalisation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     proposal = models.ForeignKey("Proposal", on_delete=models.PROTECT)
     accepted = models.BooleanField(default=False)
+
+
+class Transaction(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    sender = models.ForeignKey(
+        "users.Seliste", on_delete=models.PROTECT, related_name="sent_transactions"
+    )
+    recipient = models.ForeignKey(
+        "users.Seliste", on_delete=models.PROTECT, related_name="received_transactions"
+    )
+    trade = models.ForeignKey("Trade", on_delete=models.PROTECT)
+    amount = models.IntegerField()
+    trade_message = models.OneToOneField("TradeMessage", on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"{self.sender.username} → {self.recipient.username}: {self.amount} points"
