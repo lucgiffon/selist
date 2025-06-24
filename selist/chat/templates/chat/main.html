@@ -172,6 +172,12 @@
                                 {% endwith %}
                             {% endif %}
 
+                            {% if current_conversation is None and finalized_trades and msg.trade.id in finalized_trades %}
+                                <div class="finalized-status">
+                                    <i class="fas fa-check-circle"></i> Échange finalisé
+                                </div>
+                            {% endif %}
+
                             <span class="message-time">{{ msg.created_at|date:"d-m-Y | H:i" }}</span>
                         </div>
                         {% if current_conversation is None %}</a>{% endif %}

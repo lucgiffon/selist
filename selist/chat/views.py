@@ -80,6 +80,12 @@ def main(request, conversation_id=None, recipient_id=None):
             .select_related("trade", "user")
             .all()
         )
+        
+        # Get finalized trades for agora display
+        finalized_trades = set()
+        for message in current_messages:
+            if TradeMessage.objects.filter(trade=message.trade, type="finalisation").exists():
+                finalized_trades.add(message.trade.id)
 
     user_conversations = []
 
@@ -116,6 +122,9 @@ def main(request, conversation_id=None, recipient_id=None):
         "agora_last_message": agora_last_message,
         "recipient_id": recipient_id,
     }
+
+    if display_agora:
+        context["finalized_trades"] = finalized_trades
 
     if current_conversation and current_conversation.conversation_type == "trade":
         context["current_trade"] = current_conversation.trade
