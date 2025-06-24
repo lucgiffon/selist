@@ -135,7 +135,17 @@
     transition: all 0.2s;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
+}
+
+.validate-trade-btn i {
+    color: white !important;
+    opacity: 1;
+}
+
+.validate-trade-btn:hover i {
+    color: white !important;
 }
 
 .validate-trade-btn:hover {

@@ -222,7 +222,6 @@ body {
 .chat-actions i {
     font-size: 18px;
     color: var(--text-secondary);
-    margin-left: 20px;
     cursor: pointer;
     transition: color 0.2s;
 }
