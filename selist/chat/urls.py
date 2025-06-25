@@ -17,4 +17,5 @@ urlpatterns = [
     path("create-proposal/", views.create_proposal, name="create_proposal"),
     path("answer-proposal/", views.answer_proposal, name="answer_proposal"),
     path("direct-transfer/", views.direct_transfer, name="direct_transfer"),
+    path("cancel-trade/", views.cancel_trade, name="cancel_trade"),
 ]

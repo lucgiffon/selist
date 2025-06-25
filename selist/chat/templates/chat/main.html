@@ -129,9 +129,15 @@
             </div>
             <div class="chat-actions">
                 {% if current_conversation and current_conversation.conversation_type == "trade" and user.is_authenticated %}
+                    {% if current_conversation.trade.initiator.id == user.id %}
+                        <button id="cancel-trade-btn" class="cancel-trade-btn">
+                            <i class="fas fa-times-circle"></i> Annuler l'échange
+                        </button>
+                    {% endif %}
                     <button id="validate-trade-btn" class="validate-trade-btn">
                         <i class="fas fa-check-circle"></i> Valider l'échange
                     </button>
+
                 {% endif %}
 {#                <i class="fas fa-phone"></i>#} {# todo éventuellement permettre d'appeler #}
 {#                <i class="fas fa-video"></i>#}
@@ -161,11 +167,11 @@
                                             </button>
                                         </div>
                                     {% elif proposal and proposal.accepted %}
-                                        <div class="proposal-status accepted">
+                                        <div class="conversation-message-tag confirmed">
                                             <i class="fas fa-check-circle"></i> Proposition acceptée
                                         </div>
                                     {% elif proposal and proposal.refused %}
-                                        <div class="proposal-status refused">
+                                        <div class="conversation-message-tag denied">
                                             <i class="fas fa-times-circle"></i> Proposition refusée
                                         </div>
                                     {% endif %}
@@ -173,9 +179,14 @@
                             {% endif %}
 
                             {% if current_conversation is None and finalized_trades and msg.trade.id in finalized_trades %}
-                                <div class="finalized-status">
+                                <div class="conversation-message-tag confirmed">
                                     <i class="fas fa-check-circle"></i> Échange finalisé
                                 </div>
+                            {% elif current_conversation is None and cancelled_trades and msg.trade.id in cancelled_trades %}
+                                <div class="conversation-message-tag denied">
+                                    <i class="fas fa-times-circle"></i> Échange annulé
+                                </div>
+
                             {% endif %}
 
                             <span class="message-time">{{ msg.created_at|date:"d-m-Y | H:i" }}</span>

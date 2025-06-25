@@ -1,3 +1,6 @@
+print("Script is deprecated")
+exit(1)
+
 import os
 import django
 import sys
@@ -8,7 +11,7 @@ sys.path.append("/home/lucgiffon/PycharmProjects/selist/selist")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "selist.settings")
 django.setup()
 
-from chat.models import Proposal, Finalisation, Trade, TradeMessage
+from chat.models import Proposal, Trade, TradeMessage
 from users.models import Seliste
 
 with transaction.atomic():

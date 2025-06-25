@@ -11,29 +11,33 @@ class Conversation(models.Model):
             ("private", "Private"),
         ],
     )
-    
+
     def get_last_message(self):
-        if self.conversation_type == "trade" and hasattr(self, 'trade'):
+        if self.conversation_type == "trade" and hasattr(self, "trade"):
             return self.trade.trademessage_set.order_by("-created_at").first()
         elif self.conversation_type == "private":
             return self.privatemessage_set.order_by("-created_at").first()
         return None
-    
+
     def get_other_participant(self, current_user):
         return self.participants.exclude(id=current_user.id).first()
-    
+
     def __str__(self):
-        if self.conversation_type == "trade" and hasattr(self, 'trade'):
+        if self.conversation_type == "trade" and hasattr(self, "trade"):
             return f"Trade: {self.trade.get_type_display()}"
         elif self.conversation_type == "private":
             participants = list(self.participants.all())
             if len(participants) >= 2:
-                return f"Private: {participants[0].username} & {participants[1].username}"
+                return (
+                    f"Private: {participants[0].username} & {participants[1].username}"
+                )
         return f"Conversation ({self.conversation_type})"
 
 
 class Trade(models.Model):
-    conversation = models.OneToOneField("Conversation", on_delete=models.CASCADE, related_name="trade")
+    conversation = models.OneToOneField(
+        "Conversation", on_delete=models.CASCADE, related_name="trade"
+    )
     initiator = models.ForeignKey(
         "users.Seliste", on_delete=models.PROTECT, related_name="initiated_trades"
     )
@@ -43,6 +47,15 @@ class Trade(models.Model):
             ("offer", "Offre"),
             ("demand", "Demande"),
         ],
+    )
+    status = models.CharField(
+        max_length=11,
+        choices=[
+            ("in_progress", "En cours"),
+            ("finalized", "Finalisé"),
+            ("cancelled", "Annulé"),
+        ],
+        default="in_progress",
     )
 
 
@@ -68,10 +81,16 @@ class TradeMessage(models.Model):
 class PrivateMessage(models.Model):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    sender = models.ForeignKey("users.Seliste", on_delete=models.PROTECT, related_name="sent_private_messages")
-    recipient = models.ForeignKey("users.Seliste", on_delete=models.PROTECT, related_name="received_private_messages")
+    sender = models.ForeignKey(
+        "users.Seliste", on_delete=models.PROTECT, related_name="sent_private_messages"
+    )
+    recipient = models.ForeignKey(
+        "users.Seliste",
+        on_delete=models.PROTECT,
+        related_name="received_private_messages",
+    )
     conversation = models.ForeignKey("Conversation", on_delete=models.PROTECT)
-    
+
     def __str__(self):
         return self.text
 
@@ -88,13 +107,9 @@ class Proposal(models.Model):
     value = models.IntegerField()
     accepted = models.BooleanField(default=False)
     refused = models.BooleanField(default=False)
-    trade_message = models.OneToOneField("TradeMessage", on_delete=models.CASCADE, null=True, blank=True)
-
-
-class Finalisation(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    proposal = models.ForeignKey("Proposal", on_delete=models.PROTECT)
-    accepted = models.BooleanField(default=False)
+    trade_message = models.OneToOneField(
+        "TradeMessage", on_delete=models.CASCADE, null=True, blank=True
+    )
 
 
 class Transaction(models.Model):
@@ -108,6 +123,8 @@ class Transaction(models.Model):
     trade = models.ForeignKey("Trade", on_delete=models.PROTECT)
     amount = models.IntegerField()
     trade_message = models.OneToOneField("TradeMessage", on_delete=models.CASCADE)
-    
+
     def __str__(self):
-        return f"{self.sender.username} → {self.recipient.username}: {self.amount} points"
+        return (
+            f"{self.sender.username} → {self.recipient.username}: {self.amount} points"
+        )

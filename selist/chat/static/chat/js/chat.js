@@ -197,6 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Transaction functionality
     const validateTradeBtn = document.getElementById('validate-trade-btn');
+    const cancelTradeBtn = document.getElementById('cancel-trade-btn');
     const transactionModal = document.getElementById('transaction-modal');
     const transactionAmount = document.getElementById('transaction-amount');
     const transactionRecipient = document.getElementById('transaction-recipient');
@@ -217,6 +218,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (validateTradeBtn && currentConversation && currentConversation.type === 'trade') {
         validateTradeBtn.addEventListener('click', function() {
             openTransactionModal();
+        });
+    }
+
+    if (cancelTradeBtn && currentConversation && currentConversation.type === 'trade' && currentConversation.trade_initiator === currentUserId) {
+        cancelTradeBtn.addEventListener('click', function() {
+            cancelTrade(currentConversation.trade_id);
         });
     }
 
@@ -370,6 +377,35 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             createProposal(tradeId, amount, recipientId);
         }
+    }
+
+    function cancelTrade(tradeId) {
+        cancelTradeBtn.disabled = true;
+
+        fetch('/chat/cancel-trade/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                trade_id: tradeId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Erreur: ' + (data.error || 'Une erreur est survenue'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Erreur de connexion');
+        })
+        .finally(() => {
+            cancelTradeBtn.disabled = false;
+        });
     }
 
     function directTransfer(tradeId, amount, recipientId) {

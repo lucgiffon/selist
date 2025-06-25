@@ -80,12 +80,6 @@ def main(request, conversation_id=None, recipient_id=None):
             .select_related("trade", "user")
             .all()
         )
-        
-        # Get finalized trades for agora display
-        finalized_trades = set()
-        for message in current_messages:
-            if TradeMessage.objects.filter(trade=message.trade, type="finalisation").exists():
-                finalized_trades.add(message.trade.id)
 
     user_conversations = []
 
@@ -124,7 +118,16 @@ def main(request, conversation_id=None, recipient_id=None):
     }
 
     if display_agora:
+        finalized_trades = set()
+        cancelled_trades = set()
+        for message in current_messages:
+            if message.trade.status == "finalized":
+                finalized_trades.add(message.trade.id)
+            elif message.trade.status == "cancelled":
+                cancelled_trades.add(message.trade.id)
+
         context["finalized_trades"] = finalized_trades
+        context["cancelled_trades"] = cancelled_trades
 
     if current_conversation and current_conversation.conversation_type == "trade":
         context["current_trade"] = current_conversation.trade
@@ -481,6 +484,9 @@ def answer_proposal(request):
                 type="finalisation",
             )
 
+            proposal.trade.status = "finalized"
+            proposal.trade.save()
+
             return JsonResponse(
                 {
                     "success": True,
@@ -553,6 +559,9 @@ def direct_transfer(request):
             text=finalization_text, user=request.user, trade=trade, type="finalisation"
         )
 
+        trade.status = "finalized"
+        trade.save()
+
         # Create transaction record
         transaction = Transaction.objects.create(
             sender=sender,
@@ -581,5 +590,38 @@ def direct_transfer(request):
         return JsonResponse({"error": "Recipient not found"}, status=404)
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON"}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+@csrf_exempt
+@login_required
+def cancel_trade(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        trade_id = data.get("trade_id")
+
+        if not trade_id:
+            return JsonResponse(
+                {"error": "Missing required field trade_id"}, status=400
+            )
+
+        trade = Trade.objects.get(id=trade_id)
+
+        if not trade.initiator.id == request.user.id:
+            return JsonResponse({"error": "Not authorized"}, status=403)
+
+        trade.status = "cancelled"
+        trade.save()
+
+        return JsonResponse(
+            {"success": True, "message": "Trade cancelled successfully"}
+        )
+
+    except Trade.DoesNotExist:
+        return JsonResponse({"error": "Trade not found"}, status=404)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
