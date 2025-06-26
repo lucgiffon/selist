@@ -128,17 +128,27 @@
                 </div>
             </div>
             <div class="chat-actions">
-                {% if current_conversation and current_conversation.conversation_type == "trade" and user.is_authenticated %}
-                    {% if current_conversation.trade.initiator.id == user.id %}
-                        <button id="cancel-trade-btn" class="cancel-trade-btn">
-                            <i class="fas fa-times-circle"></i> Annuler l'échange
+                {% if current_conversation and current_conversation.conversation_type == "trade" %}
+                    {% if user.is_authenticated and current_conversation.trade.status == "in_progress"%}
+                        {% if current_conversation.trade.initiator.id == user.id %}
+                            <button id="cancel-trade-btn" class="cancel-trade-btn">
+                                <i class="fas fa-times-circle"></i> Annuler l'échange
+                            </button>
+                        {% endif %}
+                        <button id="validate-trade-btn" class="validate-trade-btn">
+                            <i class="fas fa-check-circle"></i> Valider l'échange
                         </button>
+                    {% elif current_conversation.trade.status == "cancelled"%}
+                        <div class="status-tag denied big">
+                            <i class="fas fa-times-circle"></i> Échange annulé
+                        </div>
+                    {% elif current_conversation.trade.status == "finalized"%}
+                        <div class="status-tag confirmed big">
+                            <i class="fas fa-check-circle"></i> Échange finalisé
+                        </div>
                     {% endif %}
-                    <button id="validate-trade-btn" class="validate-trade-btn">
-                        <i class="fas fa-check-circle"></i> Valider l'échange
-                    </button>
-
                 {% endif %}
+
 {#                <i class="fas fa-phone"></i>#} {# todo éventuellement permettre d'appeler #}
 {#                <i class="fas fa-video"></i>#}
 {#                <i class="fas fa-ellipsis-v"></i> #}
@@ -167,11 +177,11 @@
                                             </button>
                                         </div>
                                     {% elif proposal and proposal.accepted %}
-                                        <div class="conversation-message-tag confirmed">
+                                        <div class="status-tag confirmed">
                                             <i class="fas fa-check-circle"></i> Proposition acceptée
                                         </div>
                                     {% elif proposal and proposal.refused %}
-                                        <div class="conversation-message-tag denied">
+                                        <div class="status-tag denied">
                                             <i class="fas fa-times-circle"></i> Proposition refusée
                                         </div>
                                     {% endif %}
@@ -179,11 +189,11 @@
                             {% endif %}
 
                             {% if current_conversation is None and finalized_trades and msg.trade.id in finalized_trades %}
-                                <div class="conversation-message-tag confirmed">
+                                <div class="status-tag confirmed">
                                     <i class="fas fa-check-circle"></i> Échange finalisé
                                 </div>
                             {% elif current_conversation is None and cancelled_trades and msg.trade.id in cancelled_trades %}
-                                <div class="conversation-message-tag denied">
+                                <div class="status-tag denied">
                                     <i class="fas fa-times-circle"></i> Échange annulé
                                 </div>
 

@@ -505,7 +505,7 @@ body {
     }
 }
 
-.conversation-message-tag {
+.status-tag {
     margin-top: 8px;
     padding: 4px 8px;
     border-radius: 10px;
@@ -517,28 +517,18 @@ body {
     width: fit-content;
 }
 
-.conversation-message-tag.confirmed {
+.status-tag.confirmed {
     background-color: #E8F5E8;
     color: #2E7D32;
 }
 
-.conversation-message-tag.denied {
+.status-tag.denied {
     background-color: #FFEBEE;
     color: #C62828;
 }
-/* Finalized trade status styling */
-.finalized-status {
-    margin-top: 8px;
-    padding: 4px 8px;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    width: fit-content;
-    background-color: #E8F5E8;
-    color: #2E7D32;
+
+.status-tag.big {
+    font-size: 16px;
 }
 
 /* Trade validation buttons */
