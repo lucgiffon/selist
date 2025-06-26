@@ -37,7 +37,13 @@ def main(request, conversation_id=None, recipient_id=None):
                     type="initiation"
                 ).first()
                 chat_title = f"{current_conversation.trade.get_type_display()} - {initial_message.text}"
-            elif current_conversation.conversation_type == "private":
+            elif (
+                current_conversation.conversation_type == "private"
+                and request.user.is_authenticated
+                and current_conversation.participants.filter(
+                    id=request.user.id
+                ).exists()
+            ):
                 current_messages = (
                     PrivateMessage.objects.filter(conversation=current_conversation)
                     .select_related("conversation", "sender", "recipient")
@@ -47,6 +53,8 @@ def main(request, conversation_id=None, recipient_id=None):
                     request.user
                 )
                 chat_title = f"Conversation avec {other_participant.username}"
+            else:
+                raise Conversation.DoesNotExist
             display_agora = False
         except Conversation.DoesNotExist:
             print("Conversation with id %s does not exist", conversation_id)
