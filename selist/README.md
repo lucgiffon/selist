@@ -21,6 +21,6 @@ python manage.py migrate
 ```shell
 cd db && ./deploy.sh  # setup the database
 uv sync  # Install python and dependencies
-uv python manage.py migrate  # Migrate the database
+uv run python manage.py migrate  # Migrate the database
 source .env && DJANGO_SUPERUSER_PASSWORD=$ADMIN_PASSWORD DJANGO_SUPERUSER_USERNAME=$ADMIN_USER DJANGO_SUPERUSER_EMAIL=$ADMIN_EMAIL uv run python manage.py createsuperuser --noinput
 ```
