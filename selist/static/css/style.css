@@ -63,3 +63,122 @@ a {
 a:hover {
     opacity: .8;
 }
+
+/* Button Components */
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-family: inherit;
+}
+
+.btn-primary {
+    background-color: #2196F3;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #1976D2;
+    opacity: 1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+}
+
+.btn-large {
+    padding: 16px 32px;
+    font-size: 18px;
+}
+
+/* Landing Page Styles */
+.landing-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.landing-hero {
+    margin-bottom: 40px;
+}
+
+.landing-hero h1 {
+    font-size: 2.5rem;
+    color: #2196F3;
+    margin-bottom: 20px;
+}
+
+.landing-hero p {
+    font-size: 1.2rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.install-section {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.install-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.ios-instructions {
+    background-color: #f0f8ff;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #2196F3;
+    margin-top: 20px;
+    text-align: left;
+}
+
+.ios-instructions h3 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #1976D2;
+}
+
+.ios-instructions ol {
+    margin-left: 20px;
+    line-height: 1.8;
+}
+
+.ios-instructions li {
+    margin-bottom: 8px;
+}
+
+/* Centered content container */
+.centered-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.centered-content h1 {
+    margin-bottom: 20px;
+}
+
+.centered-content p {
+    margin-bottom: 15px;
+    max-width: 600px;
+}
