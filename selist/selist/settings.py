@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "chat",
     "selist",
     "users",
+    "pwa",
 ]
 
 MIDDLEWARE = [
@@ -144,3 +145,33 @@ if not DEBUG:
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+PWA_APP_NAME = 'SEList'
+PWA_APP_DESCRIPTION = 'A trading and exchange platform with messaging functionality'
+PWA_APP_THEME_COLOR = '#007bff'
+PWA_APP_BACKGROUND_COLOR = '#ffffff'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_ORIENTATION = 'portrait'
+PWA_APP_START_URL = '/chat'
+PWA_APP_STATUS_BAR_COLOR = 'default'
+PWA_APP_ICONS = [
+    {
+        'src': '/static/icons/android-launchericon-192-192.png',
+        'sizes': '192x192'
+    },
+    {
+        'src': '/static/icons/android-launchericon-512-512.png',
+        'sizes': '512x512'
+    }
+]
+PWA_APP_ICONS_APPLE = [
+    {
+        'src': '/static/icons/android-launchericon-192-192.png',
+        'sizes': '192x192'
+    },
+]
+PWA_APP_DIR = 'ltr'
+PWA_APP_LANG = 'fr-FR'
+PWA_SERVICE_WORKER_PATH = BASE_DIR / 'static' / 'service-worker.js'
