@@ -25,4 +25,6 @@ urlpatterns = [
     path("about/", views.about),
     path("chat/", include("chat.urls")),
     path("users/", include("users.urls")),
+    path('', include('pwa.urls')),
+    path("offline/", views.offline, name="offline"),
 ]
