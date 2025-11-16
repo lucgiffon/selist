@@ -7,3 +7,7 @@ def homepage(request):
 
 def about(request):
     return render(request, "about.html")
+
+
+def offline(request):
+    return render(request, "offline.html")
