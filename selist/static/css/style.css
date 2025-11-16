@@ -44,6 +44,7 @@ main {
     flex-grow: 1;
     display: flex;
     padding: 0;
+    justify-content: center
 }
 
 h1,
