@@ -336,9 +336,9 @@ body {
 #message-input {
     flex: 1;
     padding: 12px 15px;
-    border: none;
+    border: 1px solid var(--divider-color);
     border-radius: 20px;
-    background-color: white;
+    background-color: var(--message-user);
     font-size: 15px;
     color: var(--text-primary);
     resize: none;
