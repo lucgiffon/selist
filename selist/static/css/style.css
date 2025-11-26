@@ -14,7 +14,7 @@ body {
     flex-flow: column;
 }
 
-nav {
+.topnav {
     padding: 1rem;
     background-color: #2196F3;
     color: white;
@@ -27,17 +27,166 @@ nav {
     width: 100%;
 }
 
-nav > div {
+.topnav > div {
     display: flex;
     align-items: center;
 }
 
-nav > div:first-child {
+.topnav > div:first-child {
     flex: 1;
 }
 
-nav > div:last-child {
+.topnav > div:last-child {
     margin-left: auto;
+}
+
+.main-burger-menu {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    background-color: #2196F3;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.main-burger-menu span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.main-burger-menu:hover {
+    background-color: #1976D2;
+}
+
+.main-sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100vh;
+    background-color: #2196F3;
+    color: white;
+    z-index: 1000;
+    transition: left 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.main-sidebar.open {
+    left: 0;
+}
+
+.main-sidebar-header {
+    padding: 20px;
+    background-color: #1976D2;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.main-sidebar-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: white;
+    text-align: center;
+}
+
+.main-sidebar-nav {
+    flex: 1;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-sidebar-nav a {
+    padding: 15px 25px;
+    display: block;
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: background-color 0.2s;
+    margin: 0;
+}
+
+.main-sidebar-nav a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    opacity: 1;
+}
+
+.main-sidebar-user {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: #1976D2;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.main-sidebar-user .username {
+    color: white;
+    font-weight: 500;
+    padding: 5px 0;
+}
+
+.main-sidebar-user a {
+    padding: 10px 0;
+    display: block;
+    color: white;
+    text-decoration: none;
+    margin: 0;
+}
+
+.main-sidebar-user a:hover {
+    opacity: 0.8;
+}
+
+.main-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+.main-overlay.active {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .topnav {
+        display: none;
+    }
+
+    .main-burger-menu {
+        display: flex;
+    }
+}
+
+@media (min-width: 769px) {
+    .main-sidebar {
+        display: none;
+    }
+
+    .main-overlay {
+        display: none !important;
+    }
+
+    .main-burger-menu {
+        display: none !important;
+    }
 }
 
 main {

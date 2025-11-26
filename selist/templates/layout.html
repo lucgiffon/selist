@@ -23,7 +23,36 @@
     {% endblock %}
 </head>
 <body>
-<nav>
+
+<button class="main-burger-menu" id="burgerMenu" aria-label="Menu">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div class="main-overlay" id="overlay"></div>
+
+<nav class="main-sidebar" id="sidebar">
+    <div class="main-sidebar-header">
+        <h2>Menu</h2>
+    </div>
+    <div class="main-sidebar-nav">
+        <a href="/">Accueil</a>
+        <a href="/about">A propos</a>
+        <a href="/chat">Chat</a>
+    </div>
+    <div class="main-sidebar-user">
+        {% if user.is_authenticated %}
+            <span class="username">{{ user.username }}</span>
+            <a href="{% url 'users:logout' %}">Se déconnecter</a>
+        {% else %}
+            <a href="{% url 'users:login' %}">Se connecter</a>
+            <a href="{% url 'users:register' %}">Créer un compte</a>
+        {% endif %}
+    </div>
+</nav>
+
+<nav class="topnav">
     <div>
         <a href="/">Accueil</a> |
         <a href="/about">A propos</a> |
