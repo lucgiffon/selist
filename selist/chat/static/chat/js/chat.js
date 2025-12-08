@@ -1,4 +1,39 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const chatBurgerMenu = document.getElementById('chatBurgerMenu');
+    const chatSidebar = document.querySelector('.chat-sidebar');
+    const chatOverlay = document.getElementById('chatOverlay');
+
+    if (chatBurgerMenu && chatSidebar && chatOverlay) {
+        chatBurgerMenu.addEventListener('click', function(e) {
+            e.stopPropagation();
+            chatSidebar.classList.toggle('open');
+            chatOverlay.classList.toggle('active');
+        });
+
+        chatOverlay.addEventListener('click', function() {
+            chatSidebar.classList.remove('open');
+            chatOverlay.classList.remove('active');
+        });
+
+        const conversationLinks = document.querySelectorAll('.conversation-link');
+        conversationLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    chatSidebar.classList.remove('open');
+                    chatOverlay.classList.remove('active');
+                }
+            });
+        });
+
+        const sidebarNavLinks = chatSidebar.querySelectorAll('.sidebar-nav-link');
+        sidebarNavLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                chatSidebar.classList.remove('open');
+                chatOverlay.classList.remove('active');
+            });
+        });
+    }
+
     const sendButton = document.getElementById('send-button');
     const messageInput = document.getElementById('message-input');
     const modal = document.getElementById('trade-type-modal');
@@ -8,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const emojiBtn = document.getElementById('emoji-btn');
     const emojiPicker = document.getElementById('emoji-picker');
     const chatMessages = document.getElementById('chat-messages');
-    
+
     let currentMessage = '';
     const isInAgora = currentConversation === null && recipientId === null;
 

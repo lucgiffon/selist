@@ -140,8 +140,15 @@
         </div>
     </div>
 
+    <div class="chat-overlay" id="chatOverlay"></div>
+
     <div class="chat-main">
         <div class="chat-header">
+            <button class="chat-burger-menu" id="chatBurgerMenu" aria-label="Menu conversations">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <div class="chat-contact">
                 <div class="avatar">
                     {% if current_conversation and current_conversation.conversation_type == "trade" %}
