@@ -35,8 +35,19 @@ ALLOWED_HOSTS = [
     "54.36.99.108"
 ]
 
+# Required for CSRF in production
+CSRF_TRUSTED_ORIGINS = [
+    'https://selist.lucgiffon.fr',
+    'http://localhost',
+    'http://54.36.99.108',
+]
 
-# Application definition
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = 'Lax'
 
 INSTALLED_APPS = [
     "django.contrib.admin",
