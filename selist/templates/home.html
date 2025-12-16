@@ -8,14 +8,31 @@
 <script>
 let deferredPrompt;
 
+function isAppInstalled() {
+    return window.matchMedia('(display-mode: standalone)').matches ||
+           window.navigator.standalone === true;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    if (!isAppInstalled()) {
+        const installSec = document.getElementById('installSection');
+
+        if (installSec) {
+            installSec.style.display = 'inline-block';
+        }
+    }
+});
+
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
 
     const installSec = document.getElementById('installSection');
+
     if (installSec) {
         installSec.style.display = 'inline-block';
     }
+
 });
 
 function installPWA() {
@@ -27,7 +44,10 @@ function installPWA() {
             }
             deferredPrompt = null;
         });
+    }  else {
+        alert('L\'installation automatique n\'est pas disponible sur ce navigateur. Veuillez suivre les instructions d\'installation manuelle ci-dessous.');
     }
+
 }
 
 window.addEventListener('appinstalled', () => {
@@ -51,16 +71,25 @@ window.addEventListener('appinstalled', () => {
         <h2>Installez l'application</h2>
         <p>Profitez de SEList comme une application native sur votre appareil.</p>
 
-        <button id="installBtn" class="btn btn-primary btn-large" onclick="installPWA()" style="display: inline-block; margin-top: 20px;">
+        <button id="installBtn" class="btn btn-primary btn-large" onclick="installPWA()" style="margin-top: 20px;">
             Installer l'application
         </button>
 
-        <div class="ios-instructions">
+        <div class="installation-instructions">
             <h3>Sur iOS / Safari :</h3>
             <ol>
                 <li>Appuyez sur le bouton "Partager" <strong style="font-size: 1.2em;">⎙</strong> en bas de l'écran (Safari)</li>
                 <li>Faites défiler et sélectionnez "Sur l'écran d'accueil"</li>
                 <li>Appuyez sur "Ajouter" pour installer l'application</li>
+            </ol>
+        </div>
+
+        <div class="installation-instructions">
+            <h3>Sur Firefox :</h3>
+            <ol>
+                <li>Appuyez sur le bouton menu <strong style="font-size: 1.2em;">⋮</strong> (trois points verticaux) en haut à droite</li>
+                <li>Cherchez "Ajouter l'application à l'écran d'accueil" dans le menu</li>
+                <li>Confirmez l'installation pour ajouter l'application à votre écran d'accueil</li>
             </ol>
         </div>
     </div>

@@ -289,7 +289,7 @@ a:hover {
     color: #333;
 }
 
-.ios-instructions {
+.installation-instructions {
     background-color: #f0f8ff;
     padding: 20px;
     border-radius: 8px;
@@ -298,18 +298,18 @@ a:hover {
     text-align: left;
 }
 
-.ios-instructions h3 {
+.installation-instructions h3 {
     font-size: 1.1rem;
     margin-bottom: 10px;
     color: #1976D2;
 }
 
-.ios-instructions ol {
+.installation-instructions ol {
     margin-left: 20px;
     line-height: 1.8;
 }
 
-.ios-instructions li {
+.installation-instructions li {
     margin-bottom: 8px;
 }
 
