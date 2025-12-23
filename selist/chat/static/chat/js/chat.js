@@ -18,6 +18,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const conversationLinks = document.querySelectorAll('.conversation-link');
         conversationLinks.forEach(link => {
             link.addEventListener('click', function() {
+                const conversationList = document.querySelector('.conversation-list');
+                if (conversationList) {
+                    sessionStorage.setItem('conversationListScroll', conversationList.scrollTop);
+                }
+
                 if (window.innerWidth <= 768) {
                     chatSidebar.classList.remove('open');
                     chatOverlay.classList.remove('active');
@@ -60,6 +65,12 @@ document.addEventListener('DOMContentLoaded', function() {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
     smartScroll();
+
+    const conversationList = document.querySelector('.conversation-list');
+    const savedScroll = sessionStorage.getItem('conversationListScroll');
+    if (conversationList && savedScroll) {
+        conversationList.scrollTop = parseInt(savedScroll, 10);
+    }
 
     if (messageInput) {
         requestAnimationFrame(() => {
