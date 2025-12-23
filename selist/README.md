@@ -2,10 +2,10 @@
 
 ## Commandes utiles
 
-python manage.py runserver
-python manage.py createsuperuser
-python manage.py makemigrations
-python manage.py migrate
+uv run manage.py runserver
+uv run manage.py createsuperuser
+uv run manage.py makemigrations
+uv run manage.py migrate
 
 ## Setup
 
