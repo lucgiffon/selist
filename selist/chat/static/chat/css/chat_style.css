@@ -602,6 +602,32 @@ body {
     display: block;
 }
 
+.unread-separator {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    width: 100%;
+}
+
+.unread-separator::before,
+.unread-separator::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--accent-color), transparent);
+}
+
+.unread-separator span {
+    padding: 0 15px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background-color: #ECE5DD;
+    white-space: nowrap;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
     .chat-sidebar {

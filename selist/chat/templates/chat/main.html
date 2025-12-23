@@ -202,7 +202,7 @@
         <div class="chat-messages" id="chat-messages">
             {% for msg in current_messages %}
                 {% if msg.user %}
-                    <div class="chat-message {% if msg.user == request.user %}user{% else %}other{% endif %} {% if msg.type == 'proposal' %}proposal-message{% elif msg.type == 'finalisation' %}finalization-message{% endif %}">
+                    <div class="chat-message {% if msg.user == request.user %}user{% else %}other{% endif %} {% if msg.type == 'proposal' %}proposal-message{% elif msg.type == 'finalisation' %}finalization-message{% endif %}" data-message-id="{{ msg.id }}" data-message-type="trade">
                         {% if current_conversation is None %}
                             <a href="{% url 'chat:conversation' msg.trade.conversation.id %}" style="display:contents; color:inherit; text-decoration:none; pointer-events:auto;">
                         {% endif %}
@@ -254,8 +254,13 @@
                         </div>
                         {% endif %}
                     </div>
+                    {% if last_seen_message_id and msg.id == last_seen_message_id and not forloop.last %}
+                        <div class="unread-separator" id="unread-separator">
+                            <span>Nouveaux messages</span>
+                        </div>
+                    {% endif %}
                 {% elif msg.sender %}
-                    <div class="chat-message {% if msg.sender == request.user %}user{% else %}other{% endif %}">
+                    <div class="chat-message {% if msg.sender == request.user %}user{% else %}other{% endif %}" data-message-id="{{ msg.id }}" data-message-type="private">
                         <div class="message">
                             <p class="message-text">{{ msg.text }}</p>
                             <span class="message-time">{{ msg.created_at|date:"d-m-Y | H:i" }}</span>
@@ -268,6 +273,11 @@
                         </div>
                         {% endif %}
                     </div>
+                    {% if last_seen_message_id and msg.id == last_seen_message_id and not forloop.last %}
+                        <div class="unread-separator" id="unread-separator">
+                            <span>Nouveaux messages</span>
+                        </div>
+                    {% endif %}
                 {% endif %}
             {% endfor %}
         </div>
@@ -367,7 +377,7 @@
     const createTradeUrl = "{% url 'chat:create_trade' %}";
     const sendMessageUrl = "{% url 'chat:send_message' %}";
     const currentConversation = {% if current_conversation %}{
-        id: {{ current_conversation.id }}, 
+        id: {{ current_conversation.id }},
         type: "{{ current_conversation.conversation_type }}"{% if current_trade %},
         trade_id: {{ current_trade.id }},
         trade_type: "{{ current_trade.type }}",
@@ -375,6 +385,7 @@
     }{% else %}null{% endif %};
     const recipientId = {% if recipient_id %}{{ recipient_id }}{% else %}null{% endif %};
     const currentUserId = {% if user.is_authenticated %}{{ user.id }}{% else %}null{% endif %};
+    const lastSeenMessageId = {% if last_seen_message_id %}{{ last_seen_message_id }}{% else %}null{% endif %};
 </script>
 <script src="{% static 'chat/js/chat.js' %}"></script>
 {% endif %}

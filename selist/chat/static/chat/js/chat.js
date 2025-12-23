@@ -47,11 +47,25 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentMessage = '';
     const isInAgora = currentConversation === null && recipientId === null;
 
-    // Scroll to bottom on page load
-    function scrollToBottom() {
+    // Smart scroll function - scrolls to last seen message
+    function smartScroll() {
+        if (lastSeenMessageId) {
+            const lastSeenMessage = document.querySelector(`[data-message-id="${lastSeenMessageId}"]`);
+            if (lastSeenMessage) {
+                lastSeenMessage.scrollIntoView({ behavior: 'auto', block: 'start' });
+                return;
+            }
+        }
+
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
-    scrollToBottom();
+    smartScroll();
+
+    if (messageInput) {
+        requestAnimationFrame(() => {
+            messageInput.focus();
+        });
+    }
 
     // Emoji picker functionality
     if (emojiBtn && emojiPicker) {

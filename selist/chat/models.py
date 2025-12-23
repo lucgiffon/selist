@@ -128,3 +128,31 @@ class Transaction(models.Model):
         return (
             f"{self.sender.username} → {self.recipient.username}: {self.amount} points"
         )
+
+
+class ConversationReadStatus(models.Model):
+    user = models.ForeignKey("users.Seliste", on_delete=models.CASCADE, related_name="read_statuses")
+    conversation = models.ForeignKey("Conversation", on_delete=models.CASCADE, related_name="read_statuses", null=True, blank=True)
+    is_agora = models.BooleanField(default=False)
+    last_seen_trade_message = models.ForeignKey("TradeMessage", on_delete=models.SET_NULL, null=True, blank=True)
+    last_seen_private_message = models.ForeignKey("PrivateMessage", on_delete=models.SET_NULL, null=True, blank=True)
+    last_seen_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'conversation'],
+                condition=models.Q(is_agora=False),
+                name='unique_user_conversation'
+            ),
+            models.UniqueConstraint(
+                fields=['user'],
+                condition=models.Q(is_agora=True),
+                name='unique_user_agora'
+            ),
+        ]
+
+    def __str__(self):
+        if self.is_agora:
+            return f"{self.user.username} - Agora"
+        return f"{self.user.username} - {self.conversation}"

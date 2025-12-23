@@ -13,6 +13,7 @@ from .models import (
     Conversation,
     Proposal,
     Transaction,
+    ConversationReadStatus,
 )
 
 User = get_user_model()
@@ -23,6 +24,7 @@ def main(request, conversation_id=None, recipient_id=None):
     current_messages = []
     chat_title = "Agora"
     display_agora = True
+    last_seen_message_id = None
 
     if conversation_id:
         try:
@@ -56,6 +58,28 @@ def main(request, conversation_id=None, recipient_id=None):
             else:
                 raise Conversation.DoesNotExist
             display_agora = False
+
+            if request.user.is_authenticated:
+                read_status, _ = ConversationReadStatus.objects.get_or_create(
+                    user=request.user,
+                    conversation=current_conversation
+                )
+
+                if current_conversation.conversation_type == "trade":
+                    if read_status.last_seen_trade_message:
+                        last_seen_message_id = read_status.last_seen_trade_message.id
+                elif current_conversation.conversation_type == "private":
+                    if read_status.last_seen_private_message:
+                        last_seen_message_id = read_status.last_seen_private_message.id
+
+                if current_messages:
+                    latest_message = current_messages.last()
+                    if current_conversation.conversation_type == "trade":
+                        read_status.last_seen_trade_message = latest_message
+                    elif current_conversation.conversation_type == "private":
+                        read_status.last_seen_private_message = latest_message
+                    read_status.save()
+
         except Conversation.DoesNotExist:
             print("Conversation with id %s does not exist", conversation_id)
             raise Http404("La conversation demandée n'existe pas.")
@@ -86,8 +110,24 @@ def main(request, conversation_id=None, recipient_id=None):
         current_messages = (
             TradeMessage.objects.filter(type="initiation")
             .select_related("trade", "user")
-            .all()
+            .order_by("created_at")
         )
+
+        # Get last seen message for Agora (authenticated users only)
+        if request.user.is_authenticated:
+            read_status, _ = ConversationReadStatus.objects.get_or_create(
+                user=request.user,
+                is_agora=True,
+                defaults={'conversation': None}
+            )
+
+            if read_status.last_seen_trade_message:
+                last_seen_message_id = read_status.last_seen_trade_message.id
+
+            if current_messages:
+                latest_message = current_messages.last()
+                read_status.last_seen_trade_message = latest_message
+                read_status.save()
 
     user_conversations = []
 
@@ -123,6 +163,7 @@ def main(request, conversation_id=None, recipient_id=None):
         "chat_title": chat_title,
         "agora_last_message": agora_last_message,
         "recipient_id": recipient_id,
+        "last_seen_message_id": last_seen_message_id,
     }
 
     if display_agora:
@@ -182,6 +223,15 @@ def create_trade(request):
             text=message_text, user=request.user, trade=trade, type="initiation"
         )
 
+        # Mark this message as seen in Agora (since user just created it)
+        read_status, _ = ConversationReadStatus.objects.get_or_create(
+            user=request.user,
+            is_agora=True,
+            defaults={'conversation': None}
+        )
+        read_status.last_seen_trade_message = message
+        read_status.save()
+
         return JsonResponse(
             {
                 "success": True,
@@ -232,6 +282,15 @@ def send_message(request):
             message = TradeMessage.objects.create(
                 text=message_text, user=request.user, trade=trade, type="text"
             )
+
+            # Mark this message as seen in the conversation (since user just created it)
+            read_status, _ = ConversationReadStatus.objects.get_or_create(
+                user=request.user,
+                conversation=conversation,
+                is_agora=False
+            )
+            read_status.last_seen_trade_message = message
+            read_status.save()
 
             return JsonResponse(
                 {
@@ -285,6 +344,15 @@ def send_message(request):
                 recipient=recipient,
                 conversation=conversation,
             )
+
+            # Mark this message as seen in the conversation (since user just created it)
+            read_status, _ = ConversationReadStatus.objects.get_or_create(
+                user=request.user,
+                conversation=conversation,
+                is_agora=False
+            )
+            read_status.last_seen_private_message = message
+            read_status.save()
 
             return JsonResponse(
                 {
