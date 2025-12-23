@@ -157,12 +157,39 @@ body {
     text-align: left;
 }
 
+.conversation-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
 .conversation-time {
     font-size: 12px;
     color: var(--text-secondary);
     flex-shrink: 0;
-    min-width: 40px;
     text-align: right;
+}
+
+.unread-badge {
+    background-color: var(--accent-color);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Hide badge on active conversation */
+.conversation.active .unread-badge {
+    display: none;
 }
 
 /* Main Chat Area Styles */

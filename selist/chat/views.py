@@ -156,6 +156,56 @@ def main(request, conversation_id=None, recipient_id=None):
         .first()
     )
 
+    # Calculate unread counts for conversations and Agora
+    conversation_unread_counts = {}
+    agora_unread_count = 0
+
+    if request.user.is_authenticated:
+        user_read_statuses = {}
+        read_statuses = ConversationReadStatus.objects.filter(
+            user=request.user
+        ).select_related('last_seen_trade_message', 'last_seen_private_message')
+
+        for rs in read_statuses:
+            if rs.is_agora:
+                user_read_statuses['agora'] = rs
+            elif rs.conversation_id:
+                user_read_statuses[rs.conversation_id] = rs
+
+        for conversation in user_conversations:
+            read_status = user_read_statuses.get(conversation.id)
+
+            if conversation.conversation_type == "trade":
+                if read_status and read_status.last_seen_trade_message:
+                    unread_count = TradeMessage.objects.filter(
+                        trade=conversation.trade,
+                        created_at__gt=read_status.last_seen_trade_message.created_at
+                    ).count()
+                else:
+                    unread_count = conversation.trade.trademessage_set.count()
+
+            elif conversation.conversation_type == "private":
+                if read_status and read_status.last_seen_private_message:
+                    unread_count = PrivateMessage.objects.filter(
+                        conversation=conversation,
+                        created_at__gt=read_status.last_seen_private_message.created_at
+                    ).count()
+                else:
+                    unread_count = conversation.privatemessage_set.count()
+            else:
+                unread_count = 0
+
+            conversation_unread_counts[conversation.id] = unread_count
+
+        agora_read_status = user_read_statuses.get('agora')
+        if agora_read_status and agora_read_status.last_seen_trade_message:
+            agora_unread_count = TradeMessage.objects.filter(
+                type="initiation",
+                created_at__gt=agora_read_status.last_seen_trade_message.created_at
+            ).count()
+        else:
+            agora_unread_count = TradeMessage.objects.filter(type="initiation").count()
+
     context = {
         "current_messages": current_messages,
         "user_conversations": user_conversations,
@@ -164,6 +214,8 @@ def main(request, conversation_id=None, recipient_id=None):
         "agora_last_message": agora_last_message,
         "recipient_id": recipient_id,
         "last_seen_message_id": last_seen_message_id,
+        "conversation_unread_counts": conversation_unread_counts,
+        "agora_unread_count": agora_unread_count,
     }
 
     if display_agora:
@@ -224,13 +276,22 @@ def create_trade(request):
         )
 
         # Mark this message as seen in Agora (since user just created it)
-        read_status, _ = ConversationReadStatus.objects.get_or_create(
+        agora_read_status, _ = ConversationReadStatus.objects.get_or_create(
             user=request.user,
             is_agora=True,
             defaults={'conversation': None}
         )
-        read_status.last_seen_trade_message = message
-        read_status.save()
+        agora_read_status.last_seen_trade_message = message
+        agora_read_status.save()
+
+        # Mark this message as seen in the new conversation (since user just created it)
+        conversation_read_status, _ = ConversationReadStatus.objects.get_or_create(
+            user=request.user,
+            conversation=conversation,
+            is_agora=False
+        )
+        conversation_read_status.last_seen_trade_message = message
+        conversation_read_status.save()
 
         return JsonResponse(
             {

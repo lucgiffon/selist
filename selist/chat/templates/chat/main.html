@@ -51,8 +51,15 @@
                         <h4>Agora</h4>
                         <p>{% if agora_last_message %}{{ agora_last_message.text }}{% else %}Conversations publiques{% endif %}</p>
                     </div>
-                    <div class="conversation-time">
-                        {% if agora_last_message %}{{ agora_last_message.created_at|date:"d/m/Y" }}{% endif %}
+                    <div class="conversation-meta">
+                        <div class="conversation-time">
+                            {% if agora_last_message %}{{ agora_last_message.created_at|date:"d/m/Y" }}{% endif %}
+                        </div>
+                        {% if agora_unread_count > 0 %}
+                            <div class="unread-badge">
+                                {% if agora_unread_count > 999 %}999+{% else %}{{ agora_unread_count }}{% endif %}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </a>
@@ -71,8 +78,15 @@
                                     <h4>{{ conversation.trade.get_type_display }} - {% if initiation_msg %}{{ initiation_msg.text|truncatewords:5 }}{% endif %}</h4>
                                     <p>{% if last_msg %}{{ last_msg.text|truncatewords:8 }}{% endif %}</p>
                                 </div>
-                                <div class="conversation-time">
-                                    {% if last_msg %}{{ last_msg.created_at|date:"d/m/Y" }}{% else %}{{ conversation.created_at|date:"d/m/Y" }}{% endif %}
+                                <div class="conversation-meta">
+                                    <div class="conversation-time">
+                                        {% if last_msg %}{{ last_msg.created_at|date:"d/m/Y" }}{% else %}{{ conversation.created_at|date:"d/m/Y" }}{% endif %}
+                                    </div>
+                                    {% if conversation_unread_counts|get_item:conversation.id > 0 %}
+                                        <div class="unread-badge">
+                                            {% if conversation_unread_counts|get_item:conversation.id > 999 %}999+{% else %}{{ conversation_unread_counts|get_item:conversation.id }}{% endif %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </a>
@@ -98,8 +112,15 @@
                                     </h4>
                                     <p>{% if last_msg %}{{ last_msg.text|truncatewords:8 }}{% else %}Nouvelle conversation{% endif %}</p>
                                 </div>
-                                <div class="conversation-time">
-                                    {% if last_msg %}{{ last_msg.created_at|date:"d/m/Y" }}{% else %}{{ conversation.created_at|date:"d/m/Y" }}{% endif %}
+                                <div class="conversation-meta">
+                                    <div class="conversation-time">
+                                        {% if last_msg %}{{ last_msg.created_at|date:"d/m/Y" }}{% else %}{{ conversation.created_at|date:"d/m/Y" }}{% endif %}
+                                    </div>
+                                    {% if conversation_unread_counts|get_item:conversation.id > 0 %}
+                                        <div class="unread-badge">
+                                            {% if conversation_unread_counts|get_item:conversation.id > 999 %}999+{% else %}{{ conversation_unread_counts|get_item:conversation.id }}{% endif %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </a>
